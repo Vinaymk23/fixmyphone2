@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Motorola Phone Repair - fixmyPhone</title>
+    <meta
+      name="description"
+      content="Select your Motorola model and the repair services you need. We fix screens, batteries, and more for all recent Motorola models in Mysore."
+    />
+
+    <!-- Tailwind CSS, Font Awesome, and Google Fonts -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+        scroll-behavior: smooth;
+      }
+      .model-card,
+      .service-card {
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out,
+          border-color 0.2s ease-in-out;
+      }
+      .model-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+          0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      }
+      .model-card.selected {
+        border-color: #2563eb; /* blue-600 */
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
+      }
+      /* Progress Bar Styles */
+      .progress-bar ol {
+        display: flex;
+        align-items: flex-start;
+      }
+      .progress-bar li {
+        flex: 1;
+        text-align: center;
+      }
+      .progress-bar .step-connector {
+        flex-grow: 1;
+        height: 4px;
+        background-color: #e5e7eb;
+        transition: background-color 0.3s;
+      }
+      .progress-bar .step-node {
+        width: 2rem;
+        height: 2rem;
+        border-radius: 9999px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+      }
+      .progress-bar .completed .step-node,
+      .progress-bar .completed .step-connector {
+        background-color: #2563eb;
+        color: white;
+      }
+      .progress-bar .active .step-node {
+        background-color: #eff6ff;
+        color: #2563eb;
+        border: 2px solid #2563eb;
+      }
+      .progress-bar .upcoming .step-node {
+        background-color: #e5e7eb;
+        color: #6b7280;
+      }
+      .quote-modal {
+        transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+      }
+      .modal-content-transition {
+        transition: transform 0.3s ease-in-out;
+      }
+    </style>
+  </head>
+
+  <body class="bg-gray-50 text-gray-800">
+    <!-- Sticky Header -->
+    <header class="sticky top-0 left-0 w-full z-40 bg-white shadow-md py-4">
+      <nav class="container mx-auto px-6 flex justify-between items-center">
+        <a href="../index.html" class="flex items-center space-x-2">
+          <span class="text-2xl font-bold text-blue-600">fixmyPhone</span>
+        </a>
+        <a
+          href="../index.html#contact"
+          class="bg-blue-600 text-white font-semibold py-2 px-4 rounded-full shadow-md hover:bg-blue-700 transition-colors duration-200"
+          >Contact Us</a
+        >
+      </nav>
+    </header>
+
+    <main class="pt-12 pb-20">
+      <div class="container mx-auto px-6">
+        <!-- Visual Progress Bar: Step 2 Active -->
+        <div class="max-w-4xl mx-auto mb-12 progress-bar">
+          <ol>
+            <li class="completed">
+              <div class="flex items-center">
+                <div class="step-node">1</div>
+                <div class="step-connector"></div>
+              </div>
+              <p class="text-sm mt-2 font-semibold text-gray-800">
+                Select Brand
+              </p>
+            </li>
+            <li class="active">
+              <div class="flex items-center">
+                <div class="step-node">2</div>
+                <div class="step-connector"></div>
+              </div>
+              <p class="text-sm mt-2 font-semibold text-gray-800">
+                Choose Repairs
+              </p>
+            </li>
+            <li class="upcoming">
+              <div class="flex items-center">
+                <div class="step-node">3</div>
+                <div class="step-connector"></div>
+              </div>
+              <p class="text-sm mt-2 font-semibold text-gray-500">
+                Your Details
+              </p>
+            </li>
+            <li class="upcoming">
+              <div class="flex items-center">
+                <div class="step-node">4</div>
+              </div>
+              <p class="text-sm mt-2 font-semibold text-gray-500">
+                Confirmation
+              </p>
+            </li>
+          </ol>
+        </div>
+
+        <!-- Breadcrumbs -->
+        <nav class="text-sm text-gray-500 mb-8">
+          <ol class="list-none p-0 inline-flex">
+            <li class="flex items-center">
+              <a href="../index.html" class="text-blue-600 hover:text-blue-800"
+                >Home</a
+              ><i class="fas fa-chevron-right mx-2 text-xs"></i>
+            </li>
+            <li class="flex items-center">
+              <a
+                href="../repair_phone.html"
+                class="text-blue-600 hover:text-blue-800"
+                >Repair Mobile Phone</a
+              ><i class="fas fa-chevron-right mx-2 text-xs"></i>
+            </li>
+            <li class="flex items-center">
+              <span class="text-gray-900 font-semibold">Motorola</span>
+            </li>
+          </ol>
+        </nav>
+
+        <!-- Step 1: Model Selection -->
+        <section id="model-selection">
+          <h1 class="text-3xl lg:text-4xl font-extrabold text-center mb-4">
+            Select Your Motorola Phone to Begin Repair
+          </h1>
+          <p class="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
+            Choose your model from the list below to see available repair
+            options.
+          </p>
+          <div
+            id="model-grid"
+            class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6"
+          >
+            <!-- Models and manual entry card will be injected by JavaScript -->
+          </div>
+          <!-- Manual Model Entry Form -->
+          <div id="manual-model-form" class="hidden mt-6 max-w-sm mx-auto">
+            <input
+              type="text"
+              id="manual-model-input"
+              placeholder="Enter your phone model (e.g., Moto G Power)"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <button
+              id="manual-model-confirm"
+              class="mt-2 w-full bg-gray-600 text-white font-semibold py-2 rounded-lg hover:bg-gray-700 transition-colors"
+            >
+              Confirm Model
+            </button>
+          </div>
+        </section>
+
+        <!-- Step 2 & 3: Repair Selection and Summary -->
+        <div
+          id="repair-and-summary-section"
+          class="hidden mt-20 grid grid-cols-1 lg:grid-cols-3 gap-12"
+        >
+          <!-- Column 1: Available Repairs -->
+          <section id="repair-selection" class="lg:col-span-2">
+            <h2 class="text-2xl font-bold mb-6">
+              Available Repairs for
+              <span id="selected-model-name" class="text-blue-600"></span>
+            </h2>
+            <div id="service-list" class="space-y-4">
+              <!-- Services and manual entry card will be injected by JavaScript -->
+            </div>
+            <!-- Manual Service Entry Form -->
+            <div id="manual-service-form" class="hidden mt-4">
+              <textarea
+                id="manual-service-input"
+                rows="3"
+                placeholder="Please describe the issue you are having with your device..."
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              ></textarea>
+              <button
+                id="manual-service-add"
+                class="mt-2 bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-gray-700 transition-colors"
+              >
+                Add to Summary
+              </button>
+            </div>
+          </section>
+
+          <!-- Column 2: Redesigned Repair Summary -->
+          <aside id="repair-summary" class="lg:col-span-1">
+            <div class="sticky top-28 bg-white p-6 rounded-xl shadow-lg border">
+              <h3 class="text-xl font-bold mb-4 text-gray-800">
+                Your Repair Summary
+              </h3>
+              <div id="summary-content" class="hidden">
+                <div class="mb-4">
+                  <p
+                    class="text-sm font-semibold text-gray-500 uppercase tracking-wider"
+                  >
+                    Device
+                  </p>
+                  <p
+                    id="summary-device-name"
+                    class="font-bold text-lg text-gray-900"
+                  ></p>
+                </div>
+                <div class="border-t border-gray-200 pt-4">
+                  <p
+                    class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2"
+                  >
+                    Selected Services
+                  </p>
+                  <ul id="summary-list" class="space-y-2 text-gray-700">
+                    <!-- Summary items will be injected by JavaScript -->
+                  </ul>
+                </div>
+              </div>
+              <p id="summary-placeholder" class="text-gray-500 italic">
+                Select a model and add repairs to see them here.
+              </p>
+
+              <button
+                id="get-quote-btn"
+                class="w-full mt-6 bg-blue-600 text-white font-semibold py-3 rounded-lg hover:bg-blue-700 transition-colors duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                disabled
+              >
+                Get Quote
+              </button>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </main>
+
+    <footer class="bg-gray-800 text-white py-12">
+      <div class="container mx-auto px-6 text-center">
+        <p>&copy; 2024 fixmyPhone. All rights reserved.</p>
+        <div class="mt-4">
+          <a
+            href="../privacy.html"
+            class="hover:underline text-sm text-gray-400 mx-2"
+            >Privacy Policy</a
+          >
+          <a
+            href="../terms.html"
+            class="hover:underline text-sm text-gray-400 mx-2"
+            >Terms of Service</a
+          >
+        </div>
+      </div>
+    </footer>
+
+    <!-- Get a Quote Modal -->
+    <div
+      id="quote-modal"
+      class="quote-modal fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 opacity-0 invisible"
+    >
+      <div
+        id="quote-modal-content"
+        class="bg-white p-8 rounded-xl shadow-lg w-full max-w-lg mx-4 transform scale-95 transition-transform duration-300 modal-content-transition"
+      >
+        <div class="flex justify-between items-center mb-4">
+          <h3 id="modal-title" class="text-2xl font-bold text-gray-800">
+            Get a Free Quote
+          </h3>
+          <button
+            id="close-modal"
+            class="text-gray-500 hover:text-gray-800 text-2xl"
+          >
+            &times;
+          </button>
+        </div>
+        <p id="modal-subtitle" class="text-gray-600 mb-6">
+          Please provide your details to receive a quote for your selected
+          services.
+        </p>
+        <form id="quote-form" novalidate>
+          <div class="mb-4">
+            <label for="name" class="block text-gray-700 font-semibold mb-2"
+              >Name</label
+            >
+            <input
+              type="text"
+              id="name"
+              name="name"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-gray-400"
+              placeholder="e.g., Anjali R."
+              required
+            />
+          </div>
+          <div class="mb-4">
+            <label for="phone" class="block text-gray-700 font-semibold mb-2"
+              >Phone Number</label
+            >
+            <input
+              type="tel"
+              id="phone"
+              name="phone"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-gray-400"
+              placeholder="e.g., 9876543210"
+              required
+            />
+          </div>
+          <div class="mb-4">
+            <label for="email" class="block text-gray-700 font-semibold mb-2"
+              >Email Address</label
+            >
+            <input
+              type="email"
+              id="email"
+              name="email"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-gray-400"
+              placeholder="e.g., anjali@example.com"
+              required
+            />
+          </div>
+          <div class="mb-4">
+            <label for="device" class="block text-gray-700 font-semibold mb-2"
+              >Device Type</label
+            >
+            <input
+              type="text"
+              id="device"
+              name="device"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100"
+              readonly
+              required
+            />
+          </div>
+          <div class="mb-6">
+            <label for="issue" class="block text-gray-700 font-semibold mb-2"
+              >Selected Services</label
+            >
+            <textarea
+              id="issue"
+              name="issue"
+              rows="3"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100"
+              readonly
+              required
+            ></textarea>
+          </div>
+          <button
+            type="submit"
+            id="submit-quote"
+            class="w-full bg-blue-600 text-white font-semibold py-3 rounded-lg hover:bg-blue-700 transition-colors duration-200 animated-button flex items-center justify-center"
+          >
+            <span id="submit-text">Submit Request</span>
+            <i
+              id="submit-spinner"
+              class="fas fa-spinner fa-spin ml-2 hidden"
+            ></i>
+          </button>
+          <p
+            id="form-error"
+            class="text-red-500 text-sm mt-2 text-center hidden"
+          ></p>
+        </form>
+      </div>
+    </div>
+
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+      import {
+        getFirestore,
+        collection,
+        addDoc,
+        serverTimestamp,
+      } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+      let firebaseConfig =
+        typeof __firebase_config !== "undefined"
+          ? JSON.parse(__firebase_config)
+          : null;
+      let appId = typeof __app_id !== "undefined" ? __app_id : null;
+      let db = null;
+      let isLocalTestMode = false;
+
+      if (!firebaseConfig || !appId) {
+        console.warn(
+          "Firebase configuration not found. Activating local testing mode. Form submissions will be simulated and NOT saved to the database."
+        );
+        isLocalTestMode = true;
+        firebaseConfig = {
+          apiKey: "dummy-key",
+          authDomain: "dummy-project.firebaseapp.com",
+          projectId: "dummy-project",
+        };
+        appId = "local-test";
+      }
+
+      try {
+        const app = initializeApp(firebaseConfig);
+        db = getFirestore(app);
+      } catch (e) {
+        console.error("Firebase initialization failed:", e);
+        db = null;
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        // --- MOTOROLA SPECIFIC DATA (UPDATED) ---
+        const repairData = {
+          "Motorola Edge 50 Pro": [
+            "Screen Replacement",
+            "Battery Replacement",
+            "Back Glass Repair",
+          ],
+          "Moto G Power (2024)": [
+            "Screen Replacement",
+            "Battery Replacement",
+            "Charging Port Repair",
+          ],
+          "Motorola Razr+ (2023)": [
+            "Inner Screen Replacement",
+            "Outer Screen Replacement",
+            "Battery Replacement",
+          ],
+          "Moto G Stylus (2023)": ["Screen Replacement", "Battery Replacement"],
+        };
+        const serviceDescriptions = {
+          "Screen Replacement":
+            "Fixes cracked, scratched, or unresponsive displays.",
+          "Inner Screen Replacement":
+            "Replaces the main flexible display on Razr models.",
+          "Outer Screen Replacement":
+            "Replaces the external cover screen on Razr models.",
+          "Battery Replacement":
+            "Resolves poor battery life and unexpected shutdowns.",
+          "Back Glass Repair":
+            "Replaces shattered or cracked back glass panels.",
+          "Camera Repair":
+            "Fixes issues with blurry photos, focus problems, or black screens.",
+          "Charging Port Repair":
+            "Solves problems with charging or connecting accessories.",
+          "Water Damage Diagnostic":
+            "Comprehensive check for liquid-damaged devices.",
+        };
+        const genericServices = [
+          "Screen Replacement",
+          "Battery Replacement",
+          "Charging Port Repair",
+          "Camera Repair",
+          "Back Glass Repair",
+          "Water Damage Diagnostic",
+        ];
+        // --- END OF MOTOROLA SPECIFIC DATA ---
+
+        let selectedModel = null;
+        let selectedServices = [];
+
+        const modelGrid = document.getElementById("model-grid");
+        const repairAndSummarySection = document.getElementById(
+          "repair-and-summary-section"
+        );
+        const selectedModelName = document.getElementById(
+          "selected-model-name"
+        );
+        const serviceList = document.getElementById("service-list");
+        const summaryContent = document.getElementById("summary-content");
+        const summaryDeviceName = document.getElementById(
+          "summary-device-name"
+        );
+        const summaryList = document.getElementById("summary-list");
+        const summaryPlaceholder = document.getElementById(
+          "summary-placeholder"
+        );
+        const getQuoteBtn = document.getElementById("get-quote-btn");
+        const quoteModal = document.getElementById("quote-modal");
+        const quoteModalContent = document.getElementById(
+          "quote-modal-content"
+        );
+        const closeModalButton = document.getElementById("close-modal");
+        const quoteForm = document.getElementById("quote-form");
+        const deviceInput = document.getElementById("device");
+        const issueInput = document.getElementById("issue");
+        const submitButton = document.getElementById("submit-quote");
+        const submitText = document.getElementById("submit-text");
+        const submitSpinner = document.getElementById("submit-spinner");
+        const formError = document.getElementById("form-error");
+        const manualModelForm = document.getElementById("manual-model-form");
+        const manualModelInput = document.getElementById("manual-model-input");
+        const manualModelConfirm = document.getElementById(
+          "manual-model-confirm"
+        );
+        const manualServiceForm = document.getElementById(
+          "manual-service-form"
+        );
+        const manualServiceInput = document.getElementById(
+          "manual-service-input"
+        );
+        const manualServiceAdd = document.getElementById("manual-service-add");
+
+        const createProgressBar = (currentStep) => {
+          const steps = [
+            "Select Brand",
+            "Choose Repairs",
+            "Your Details",
+            "Confirmation",
+          ];
+          let items = "";
+          steps.forEach((step, index) => {
+            const stepNum = index + 1;
+            let statusClass = "";
+            if (stepNum < currentStep) statusClass = "completed";
+            else if (stepNum === currentStep) statusClass = "active";
+            else statusClass = "upcoming";
+            items += `<li class="${statusClass}"><div class="flex items-center"><div class="step-node">${stepNum}</div>${
+              index < steps.length - 1
+                ? '<div class="step-connector"></div>'
+                : ""
+            }</div><p class="text-sm mt-2 font-semibold">${step}</p></li>`;
+          });
+          const progressBarHTML = `<div class="mb-8 progress-bar"><ol>${items}</ol></div>`;
+          const existingBar = quoteModalContent.querySelector(".progress-bar");
+          if (existingBar) existingBar.outerHTML = progressBarHTML;
+          else
+            quoteModalContent.insertAdjacentHTML("afterbegin", progressBarHTML);
+        };
+        const showModal = (device, services) => {
+          deviceInput.value = device;
+          issueInput.value = services.join(", ");
+          createProgressBar(3);
+          quoteModal.classList.remove("invisible", "opacity-0");
+          quoteModalContent.classList.remove("scale-95");
+          document.body.style.overflow = "hidden";
+        };
+        const hideModal = () => {
+          quoteModal.classList.add("invisible", "opacity-0");
+          quoteModalContent.classList.add("scale-95");
+          document.body.style.overflow = "";
+          formError.classList.add("hidden");
+        };
+
+        const renderModelGrid = () => {
+          modelGrid.innerHTML = "";
+          for (const model in repairData) {
+            const card = document.createElement("div");
+            card.className =
+              "model-card cursor-pointer flex flex-col items-center p-4 bg-white rounded-xl shadow-md border-2 border-transparent";
+            card.dataset.model = model;
+            card.innerHTML = `<img src="https://placehold.co/100x100/E0E7FF/1E40AF?text=${model.replace(
+              / /g,
+              "+"
+            )}" alt="${model}" class="w-20 h-20 object-contain mb-2 rounded-md"/><span class="font-semibold text-sm text-center">${model}</span>`;
+            modelGrid.appendChild(card);
+          }
+          const manualCard = document.createElement("div");
+          manualCard.id = "manual-model-card";
+          manualCard.className =
+            "model-card cursor-pointer flex flex-col items-center justify-center p-4 bg-gray-100 rounded-xl shadow-sm border-2 border-dashed border-gray-400 hover:border-blue-500 hover:bg-gray-200";
+          manualCard.innerHTML = `<i class="fas fa-question-circle text-4xl text-gray-500 mb-2"></i><span class="font-semibold text-sm text-center text-gray-700">Model Not Listed?</span>`;
+          modelGrid.appendChild(manualCard);
+        };
+
+        const renderServices = () => {
+          serviceList.innerHTML = "";
+          const availableServices =
+            repairData[selectedModel] || genericServices;
+          availableServices.forEach((service) => {
+            const isSelected = selectedServices.includes(service);
+            const card = document.createElement("div");
+            card.className =
+              "service-card flex items-center justify-between p-4 bg-white rounded-lg shadow-sm border";
+            card.innerHTML = `<div><h4 class="font-bold">${service}</h4><p class="text-sm text-gray-600">${
+              serviceDescriptions[service] || "Custom repair request."
+            }</p></div><button data-service="${service}" class="add-remove-btn text-sm font-semibold py-2 px-4 rounded-full transition-colors ${
+              isSelected
+                ? "bg-red-100 text-red-700 hover:bg-red-200"
+                : "bg-blue-100 text-blue-700 hover:bg-blue-200"
+            }">${isSelected ? "Remove" : "Add"}</button>`;
+            serviceList.appendChild(card);
+          });
+          const manualServiceCard = document.createElement("div");
+          manualServiceCard.id = "manual-service-card";
+          manualServiceCard.className =
+            "service-card flex flex-col items-center justify-center p-4 bg-gray-100 rounded-lg shadow-sm border-2 border-dashed border-gray-400 cursor-pointer hover:border-blue-500 hover:bg-gray-200";
+          manualServiceCard.innerHTML = `<i class="fas fa-tools text-3xl text-gray-500 mb-2"></i><h4 class="font-bold text-gray-700">Other Repair Issue?</h4><p class="text-sm text-gray-600 text-center mt-1">Click to describe your problem.</p>`;
+          serviceList.appendChild(manualServiceCard);
+        };
+
+        const renderSummary = () => {
+          if (selectedServices.length === 0) {
+            summaryContent.classList.add("hidden");
+            summaryPlaceholder.classList.remove("hidden");
+            getQuoteBtn.disabled = true;
+            getQuoteBtn.textContent = "Get Quote";
+          } else {
+            summaryPlaceholder.classList.add("hidden");
+            summaryContent.classList.remove("hidden");
+            summaryDeviceName.textContent = selectedModel;
+            summaryList.innerHTML = "";
+            selectedServices.forEach((service) => {
+              const li = document.createElement("li");
+              li.className = "flex justify-between items-center text-sm";
+              li.innerHTML = `<span>${service}</span><button data-service-remove="${service}" class="text-red-500 hover:text-red-700 font-bold text-lg">&times;</button>`;
+              summaryList.appendChild(li);
+            });
+            getQuoteBtn.disabled = false;
+            getQuoteBtn.textContent = `Get Quote for ${selectedServices.length} Service(s)`;
+          }
+        };
+
+        const handleModelSelect = (modelName) => {
+          selectedModel = modelName;
+          selectedServices = [];
+          document
+            .querySelectorAll(".model-card")
+            .forEach((c) => c.classList.remove("selected"));
+          const card = document.querySelector(
+            `.model-card[data-model="${modelName}"]`
+          );
+          if (card) card.classList.add("selected");
+
+          selectedModelName.textContent = selectedModel;
+          repairAndSummarySection.classList.remove("hidden");
+          renderServices();
+          renderSummary();
+          repairAndSummarySection.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
+        };
+
+        modelGrid.addEventListener("click", (e) => {
+          const card = e.target.closest(".model-card");
+          if (!card) return;
+          if (card.id === "manual-model-card") {
+            manualModelForm.classList.remove("hidden");
+            manualModelInput.focus();
+            manualModelForm.scrollIntoView({
+              behavior: "smooth",
+              block: "center",
+            });
+          } else {
+            handleModelSelect(card.dataset.model);
+          }
+        });
+
+        manualModelConfirm.addEventListener("click", () => {
+          const modelName = manualModelInput.value.trim();
+          if (modelName) {
+            handleModelSelect(modelName);
+            manualModelForm.classList.add("hidden");
+            manualModelInput.value = "";
+          }
+        });
+
+        manualServiceAdd.addEventListener("click", () => {
+          const serviceDescription = manualServiceInput.value.trim();
+          if (
+            serviceDescription &&
+            !selectedServices.includes(serviceDescription)
+          ) {
+            selectedServices.push(serviceDescription);
+            renderSummary();
+            manualServiceInput.value = "";
+            manualServiceForm.classList.add("hidden");
+          }
+        });
+
+        serviceList.addEventListener("click", (e) => {
+          const addRemoveButton = e.target.closest(".add-remove-btn");
+          const manualCard = e.target.closest("#manual-service-card");
+
+          if (addRemoveButton) {
+            const service = addRemoveButton.dataset.service;
+            if (selectedServices.includes(service)) {
+              selectedServices = selectedServices.filter((s) => s !== service);
+            } else {
+              selectedServices.push(service);
+            }
+            renderServices();
+            renderSummary();
+          } else if (manualCard) {
+            manualServiceForm.classList.remove("hidden");
+            manualServiceInput.focus();
+          }
+        });
+
+        const handleSummaryRemove = (e) => {
+          const button = e.target.closest("[data-service-remove]");
+          if (!button) return;
+          const service = button.dataset.serviceRemove;
+          selectedServices = selectedServices.filter((s) => s !== service);
+          renderServices();
+          renderSummary();
+        };
+        const handleGetQuote = () => showModal(selectedModel, selectedServices);
+
+        quoteForm.addEventListener("submit", async (e) => {
+          e.preventDefault();
+          if (!quoteForm.checkValidity()) {
+            formError.textContent = "Please fill out all required fields.";
+            formError.classList.remove("hidden");
+            return;
+          }
+          const phoneValue = document.getElementById("phone").value;
+          const emailValue = document.getElementById("email").value;
+          if (!/^\d{10}$/.test(phoneValue)) {
+            formError.textContent =
+              "Please enter a valid 10-digit Indian phone number.";
+            formError.classList.remove("hidden");
+            return;
+          }
+          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailValue)) {
+            formError.textContent = "Please enter a valid email address.";
+            formError.classList.remove("hidden");
+            return;
+          }
+          formError.classList.add("hidden");
+          submitButton.disabled = true;
+          submitText.textContent = "Submitting...";
+          submitSpinner.classList.remove("hidden");
+
+          if (isLocalTestMode) {
+            console.log("LOCAL TEST MODE: Simulating a successful submission.");
+            setTimeout(() => {
+              const fakeDocId = `test_${new Date().getTime()}`;
+              window.location.href = `../quote-confirmation.html?id=${fakeDocId}`;
+            }, 1500);
+            return;
+          }
+
+          if (!db) {
+            formError.textContent =
+              "Database is not configured correctly. Cannot submit.";
+            formError.classList.remove("hidden");
+            submitButton.disabled = false;
+            submitText.textContent = "Submit Request";
+            submitSpinner.classList.add("hidden");
+            return;
+          }
+
+          const formData = {
+            name: document.getElementById("name").value,
+            phone: phoneValue,
+            email: emailValue,
+            device: deviceInput.value,
+            services: issueInput.value,
+            submittedAt: serverTimestamp(),
+            status: "New",
+          };
+          const timeoutPromise = new Promise((_, reject) =>
+            setTimeout(
+              () => reject(new Error("Request timed out after 10 seconds.")),
+              10000
+            )
+          );
+
+          try {
+            const collectionRef = collection(
+              db,
+              "artifacts",
+              appId,
+              "public",
+              "data",
+              "quoteRequests"
+            );
+            const addDocPromise = addDoc(collectionRef, formData);
+            const docRef = await Promise.race([addDocPromise, timeoutPromise]);
+
+            if (!docRef || !docRef.id) {
+              throw new Error("Database returned an invalid response.");
+            }
+            window.location.href = `../quote-confirmation.html?id=${docRef.id}`;
+          } catch (error) {
+            console.error("Error or timeout adding document: ", error);
+            if (error.message && error.message.includes("timed out")) {
+              formError.textContent =
+                "Request timed out. Please check your network and try again.";
+            } else {
+              formError.textContent =
+                "Could not submit request. An unexpected error occurred.";
+            }
+            formError.classList.remove("hidden");
+            submitButton.disabled = false;
+            submitText.textContent = "Submit Request";
+            submitSpinner.classList.add("hidden");
+          }
+        });
+
+        renderModelGrid();
+
+        summaryList.addEventListener("click", handleSummaryRemove);
+        getQuoteBtn.addEventListener("click", handleGetQuote);
+        closeModalButton.addEventListener("click", hideModal);
+        quoteModal.addEventListener("click", (e) => {
+          if (e.target === quoteModal) hideModal();
+        });
+      });
+    </script>
+  </body>
+</html>

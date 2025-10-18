@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard - fixmyPhone</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+      body {
+        font-family: "Inter", sans-serif;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-100">
+    <div
+      id="login-screen"
+      class="min-h-screen flex items-center justify-center"
+    >
+      <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-sm">
+        <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">
+          Admin Login
+        </h2>
+        <form id="login-form">
+          <div class="mb-4">
+            <label for="password" class="block text-gray-700 font-semibold mb-2"
+              >Password</label
+            >
+            <input
+              type="password"
+              id="password"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <button
+            type="submit"
+            class="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Login
+          </button>
+          <p
+            id="login-error"
+            class="text-red-500 text-sm mt-2 text-center hidden"
+          ></p>
+        </form>
+      </div>
+    </div>
+
+    <div id="dashboard-content" class="hidden">
+      <header class="bg-white shadow-md">
+        <div
+          class="container mx-auto px-6 py-4 flex justify-between items-center"
+        >
+          <h1 class="text-2xl font-bold text-blue-600">fixmyPhone Admin</h1>
+          <button
+            id="logout-button"
+            class="text-sm text-gray-600 hover:text-blue-600"
+          >
+            Logout
+          </button>
+        </div>
+      </header>
+      <main class="container mx-auto px-6 py-8">
+        <h2 class="text-3xl font-bold text-gray-800 mb-6">Quote Requests</h2>
+        <div class="bg-white rounded-xl shadow-lg overflow-x-auto">
+          <table class="w-full text-left">
+            <thead class="bg-gray-50 border-b border-gray-200">
+              <tr>
+                <th class="p-4 font-semibold text-sm">Date</th>
+                <th class="p-4 font-semibold text-sm">Customer</th>
+                <th class="p-4 font-semibold text-sm">Contact</th>
+                <th class="p-4 font-semibold text-sm">Device & Services</th>
+                <th class="p-4 font-semibold text-sm">Status</th>
+              </tr>
+            </thead>
+            <tbody id="quotes-table-body">
+              <!-- Rows will be injected here -->
+            </tbody>
+          </table>
+          <div id="loading-state" class="text-center p-8">
+            <i class="fas fa-spinner fa-spin text-2xl text-gray-400"></i>
+            <p class="mt-2 text-gray-500">Loading requests...</p>
+          </div>
+          <div id="empty-state" class="text-center p-8 hidden">
+            <p class="text-gray-500">No quote requests found.</p>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+      import {
+        getFirestore,
+        collection,
+        query,
+        onSnapshot,
+        doc,
+        updateDoc,
+        orderBy,
+      } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+      let firebaseConfig =
+        typeof __firebase_config !== "undefined"
+          ? JSON.parse(__firebase_config)
+          : null;
+      let appId = typeof __app_id !== "undefined" ? __app_id : null;
+      let db;
+
+      if (firebaseConfig && appId) {
+        try {
+          const app = initializeApp(firebaseConfig);
+          db = getFirestore(app);
+        } catch (e) {
+          console.error("Firebase init failed on admin page:", e);
+        }
+      } else {
+        console.error("Firebase config not available on admin page.");
+      }
+
+      const loginScreen = document.getElementById("login-screen");
+      const dashboardContent = document.getElementById("dashboard-content");
+      const loginForm = document.getElementById("login-form");
+      const loginError = document.getElementById("login-error");
+      const logoutButton = document.getElementById("logout-button");
+      const quotesTableBody = document.getElementById("quotes-table-body");
+      const loadingState = document.getElementById("loading-state");
+      const emptyState = document.getElementById("empty-state");
+
+      const ADMIN_PASSWORD = "fixmyphoneadmin2025"; // Simple password, can be changed.
+
+      function showDashboard() {
+        loginScreen.classList.add("hidden");
+        dashboardContent.classList.remove("hidden");
+        sessionStorage.setItem("isAdminAuthenticated", "true");
+        fetchQuotes();
+      }
+
+      function showLogin() {
+        dashboardContent.classList.add("hidden");
+        loginScreen.classList.remove("hidden");
+        sessionStorage.removeItem("isAdminAuthenticated");
+      }
+
+      loginForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const password = document.getElementById("password").value;
+        if (password === ADMIN_PASSWORD) {
+          showDashboard();
+        } else {
+          loginError.textContent = "Incorrect password.";
+          loginError.classList.remove("hidden");
+        }
+      });
+
+      logoutButton.addEventListener("click", showLogin);
+
+      // Check session storage on page load
+      if (sessionStorage.getItem("isAdminAuthenticated") === "true") {
+        showDashboard();
+      }
+
+      function fetchQuotes() {
+        if (!db) {
+          loadingState.innerHTML =
+            '<p class="text-red-500">Database connection failed.</p>';
+          return;
+        }
+        const quotesCollectionRef = collection(
+          db,
+          "artifacts",
+          appId,
+          "public",
+          "data",
+          "quoteRequests"
+        );
+        const q = query(quotesCollectionRef, orderBy("submittedAt", "desc"));
+
+        onSnapshot(
+          q,
+          (snapshot) => {
+            loadingState.classList.add("hidden");
+            if (snapshot.empty) {
+              emptyState.classList.remove("hidden");
+              quotesTableBody.innerHTML = "";
+            } else {
+              emptyState.classList.add("hidden");
+              quotesTableBody.innerHTML = "";
+              snapshot.forEach((docSnap) => {
+                const quote = docSnap.data();
+                const quoteId = docSnap.id;
+                const row = document.createElement("tr");
+                row.className = "border-b border-gray-200";
+
+                const submittedAt = quote.submittedAt
+                  ? quote.submittedAt.toDate().toLocaleString("en-IN")
+                  : "N/A";
+
+                row.innerHTML = `
+                            <td class="p-4 text-sm">${submittedAt}</td>
+                            <td class="p-4 text-sm font-semibold">${
+                              quote.name
+                            }</td>
+                            <td class="p-4 text-sm">
+                                <p>${quote.phone}</p>
+                                <p class="text-gray-500">${quote.email}</p>
+                            </td>
+                            <td class="p-4 text-sm">
+                                <p class="font-semibold">${quote.device}</p>
+                                <p class="text-gray-600">${quote.services}</p>
+                            </td>
+                            <td class="p-4 text-sm">
+                                <select data-id="${quoteId}" class="status-dropdown rounded-lg border-gray-300">
+                                    <option value="New" ${
+                                      quote.status === "New" ? "selected" : ""
+                                    }>New</option>
+                                    <option value="Contacted" ${
+                                      quote.status === "Contacted"
+                                        ? "selected"
+                                        : ""
+                                    }>Contacted</option>
+                                    <option value="Completed" ${
+                                      quote.status === "Completed"
+                                        ? "selected"
+                                        : ""
+                                    }>Completed</option>
+                                    <option value="Cancelled" ${
+                                      quote.status === "Cancelled"
+                                        ? "selected"
+                                        : ""
+                                    }>Cancelled</option>
+                                </select>
+                            </td>
+                        `;
+                quotesTableBody.appendChild(row);
+              });
+            }
+          },
+          (error) => {
+            console.error("Error fetching quotes: ", error);
+            loadingState.innerHTML =
+              '<p class="text-red-500">Error fetching data. Check console.</p>';
+          }
+        );
+      }
+
+      quotesTableBody.addEventListener("change", (e) => {
+        if (e.target.classList.contains("status-dropdown")) {
+          const docId = e.target.dataset.id;
+          const newStatus = e.target.value;
+          const docRef = doc(
+            db,
+            "artifacts",
+            appId,
+            "public",
+            "data",
+            "quoteRequests",
+            docId
+          );
+          updateDoc(docRef, { status: newStatus }).catch((err) =>
+            console.error("Error updating status:", err)
+          );
+        }
+      });
+    </script>
+  </body>
+</html>

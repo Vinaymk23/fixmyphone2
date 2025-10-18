@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog - Phone Care & Repair Tips | fixmyPhone</title>
+    <meta
+      name="description"
+      content="Read the latest tips and advice from the experts at fixmyPhone on how to care for your mobile device, extend its battery life, and troubleshoot common issues."
+    />
+
+    <!-- Tailwind CSS, Font Awesome, and Google Fonts -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      .post-card {
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+      }
+      .post-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+          0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      }
+    </style>
+  </head>
+
+  <body class="bg-gray-50 text-gray-800">
+    <!-- Sticky Header -->
+    <header class="sticky top-0 left-0 w-full z-40 bg-white shadow-md py-4">
+      <nav class="container mx-auto px-6 flex justify-between items-center">
+        <a href="index.html" class="flex items-center space-x-2">
+          <span class="text-2xl font-bold text-blue-600">fixmyPhone</span>
+        </a>
+        <div class="hidden md:flex items-center space-x-6">
+          <a
+            href="index.html#services"
+            class="text-gray-600 hover:text-blue-600"
+            >Services</a
+          >
+          <a href="repair_phone.html" class="text-gray-600 hover:text-blue-600"
+            >Book a Repair</a
+          >
+          <a href="index.html#contact" class="text-gray-600 hover:text-blue-600"
+            >Contact</a
+          >
+        </div>
+        <a
+          href="repair_phone.html"
+          class="bg-blue-600 text-white font-semibold py-2 px-4 rounded-full shadow-md hover:bg-blue-700 transition-colors duration-200"
+          >Get a Free Quote</a
+        >
+      </nav>
+    </header>
+
+    <main class="py-12 md:py-20">
+      <div class="container mx-auto px-6">
+        <!-- Page Title -->
+        <section class="text-center mb-12">
+          <h1 class="text-4xl lg:text-5xl font-extrabold text-gray-900">
+            Phone Care & Repair Tips
+          </h1>
+          <p class="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
+            Learn how to keep your device in top condition with our expert
+            advice and tutorials.
+          </p>
+        </section>
+
+        <!-- Blog Post Grid -->
+        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <!-- Blog Post Card 1 -->
+          <div
+            class="post-card bg-white rounded-xl shadow-md overflow-hidden flex flex-col"
+          >
+            <img
+              src="https://placehold.co/600x400/1E40AF/fff?text=Battery+Life"
+              alt="Illustration about phone battery life"
+              class="w-full h-48 object-cover"
+            />
+            <div class="p-6 flex flex-col flex-grow">
+              <h3 class="text-xl font-semibold mb-2 text-gray-800">
+                10 Tips to Extend Your Phone's Battery Life
+              </h3>
+              <p class="text-gray-600 text-sm flex-grow">
+                A guide on how to make your battery last longer with simple
+                habit changes and settings adjustments...
+              </p>
+              <a
+                href="posts/10-tips-for-battery-life.html"
+                class="mt-4 inline-block text-blue-600 font-semibold hover:underline self-start"
+                >Read More &rarr;</a
+              >
+            </div>
+          </div>
+
+          <!-- Blog Post Card 2 -->
+          <div
+            class="post-card bg-white rounded-xl shadow-md overflow-hidden flex flex-col"
+          >
+            <img
+              src="https://placehold.co/600x400/1E40AF/fff?text=Water+Damage"
+              alt="Illustration of a phone with water damage"
+              class="w-full h-48 object-cover"
+            />
+            <div class="p-6 flex flex-col flex-grow">
+              <h3 class="text-xl font-semibold mb-2 text-gray-800">
+                What to Do After Your Phone Gets Wet
+              </h3>
+              <p class="text-gray-600 text-sm flex-grow">
+                An essential guide on the immediate do's and don'ts when your
+                smartphone takes an unexpected dive...
+              </p>
+              <a
+                href="posts/what-to-do-after-water-damage.html"
+                class="mt-4 inline-block text-blue-600 font-semibold hover:underline self-start"
+                >Read More &rarr;</a
+              >
+            </div>
+          </div>
+
+          <!-- Blog Post Card 3 -->
+          <div
+            class="post-card bg-white rounded-xl shadow-md overflow-hidden flex flex-col"
+          >
+            <img
+              src="https://placehold.co/600x400/1E40AF/fff?text=Screen+Protectors"
+              alt="Illustration of a screen protector being applied to a phone"
+              class="w-full h-48 object-cover"
+            />
+            <div class="p-6 flex flex-col flex-grow">
+              <h3 class="text-xl font-semibold mb-2 text-gray-800">
+                Are Screen Protectors Really Necessary?
+              </h3>
+              <p class="text-gray-600 text-sm flex-grow">
+                We break down the pros and cons of using a screen protector and
+                which ones provide the best value...
+              </p>
+              <a
+                href="posts/are-screen-protectors-necessary.html"
+                class="mt-4 inline-block text-blue-600 font-semibold hover:underline self-start"
+                >Read More &rarr;</a
+              >
+            </div>
+          </div>
+
+          <!-- Add more blog post cards here as needed -->
+        </section>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12">
+      <div class="container mx-auto px-6 text-center">
+        <p>&copy; 2024 fixmyPhone. All rights reserved.</p>
+        <div class="mt-4">
+          <a
+            href="privacy.html"
+            class="hover:underline text-sm text-gray-400 mx-2"
+            >Privacy Policy</a
+          >
+          <a
+            href="terms.html"
+            class="hover:underline text-sm text-gray-400 mx-2"
+            >Terms of Service</a
+          >
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

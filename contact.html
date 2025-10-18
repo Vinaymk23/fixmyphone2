@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contact fixmyPhone | Phone Repair Shop in Mysore</title>
+    <meta
+      name="description"
+      content="Contact fixmyPhone in Mysore for fast, reliable phone repair. Visit our store, call for a free quote on screen replacement, battery issues, or water damage, or send us a message."
+    />
+    <meta
+      name="keywords"
+      content="contact phone repair mysore, fixmyphone contact, mysore phone shop, smartphone repair address, mobile service center mysore"
+    />
+
+    <!-- Tailwind CSS, Font Awesome, and Google Fonts -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+    </style>
+  </head>
+
+  <body class="bg-gray-50 text-gray-800">
+    <!-- Sticky Header -->
+    <header class="sticky top-0 left-0 w-full z-40 bg-white shadow-md py-4">
+      <nav class="container mx-auto px-6 flex justify-between items-center">
+        <a href="index.html" class="flex items-center space-x-2">
+          <span class="text-2xl font-bold text-blue-600">fixmyPhone</span>
+        </a>
+        <div class="hidden md:flex items-center space-x-6">
+          <a
+            href="index.html#services"
+            class="text-gray-600 hover:text-blue-600"
+            >Services</a
+          >
+          <a href="repair_phone.html" class="text-gray-600 hover:text-blue-600"
+            >Book a Repair</a
+          >
+          <a href="blog.html" class="text-gray-600 hover:text-blue-600">Blog</a>
+        </div>
+        <a
+          href="repair_phone.html"
+          class="bg-blue-600 text-white font-semibold py-2 px-4 rounded-full shadow-md hover:bg-blue-700 transition-colors duration-200"
+          >Get a Free Quote</a
+        >
+      </nav>
+    </header>
+
+    <main class="py-12 md:py-20">
+      <div class="container mx-auto px-6">
+        <!-- Page Title -->
+        <section class="text-center mb-12">
+          <h1 class="text-4xl lg:text-5xl font-extrabold text-gray-900">
+            Get in Touch
+          </h1>
+          <p class="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
+            We're here to help with all your phone repair needs. Visit us in
+            Mysore, give us a call, or send a message below.
+          </p>
+        </section>
+
+        <!-- Contact Grid -->
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          <!-- Column 1: Contact Form -->
+          <div class="bg-white p-8 rounded-xl shadow-lg border">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800">
+              Send Us a Message
+            </h2>
+            <form id="contact-form" novalidate>
+              <div class="mb-4">
+                <label for="name" class="block text-gray-700 font-semibold mb-2"
+                  >Name</label
+                >
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-gray-400"
+                  placeholder="Your Name"
+                  required
+                />
+              </div>
+              <div class="mb-4">
+                <label
+                  for="email"
+                  class="block text-gray-700 font-semibold mb-2"
+                  >Email Address</label
+                >
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-gray-400"
+                  placeholder="you@example.com"
+                  required
+                />
+              </div>
+              <div class="mb-4">
+                <label
+                  for="phone"
+                  class="block text-gray-700 font-semibold mb-2"
+                  >Phone Number (Optional)</label
+                >
+                <input
+                  type="tel"
+                  id="phone"
+                  name="phone"
+                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-gray-400"
+                  placeholder="e.g., 9876543210"
+                />
+              </div>
+              <div class="mb-6">
+                <label
+                  for="message"
+                  class="block text-gray-700 font-semibold mb-2"
+                  >Message</label
+                >
+                <textarea
+                  id="message"
+                  name="message"
+                  rows="5"
+                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="How can we help you today?"
+                  required
+                ></textarea>
+              </div>
+              <button
+                type="submit"
+                id="submit-contact"
+                class="w-full bg-blue-600 text-white font-semibold py-3 rounded-lg hover:bg-blue-700 transition-colors duration-200 flex items-center justify-center"
+              >
+                <span id="submit-text">Send Message</span>
+                <i
+                  id="submit-spinner"
+                  class="fas fa-spinner fa-spin ml-2 hidden"
+                ></i>
+              </button>
+              <p
+                id="form-error"
+                class="text-red-500 text-sm mt-2 text-center hidden"
+              ></p>
+              <p
+                id="form-success"
+                class="text-green-600 text-sm mt-4 text-center hidden p-4 bg-green-50 rounded-lg"
+              >
+                Thank you! Your message has been sent successfully. We'll get
+                back to you shortly.
+              </p>
+            </form>
+          </div>
+
+          <!-- Column 2: Map and Details -->
+          <div>
+            <div class="bg-white p-8 rounded-xl shadow-lg border mb-8">
+              <h3 class="text-xl font-bold mb-4 text-gray-800">
+                Visit Our Store
+              </h3>
+              <div class="space-y-4 text-gray-700">
+                <div class="flex items-start">
+                  <i
+                    class="fas fa-map-marker-alt text-xl text-blue-600 mt-1 mr-4"
+                  ></i>
+                  <div>
+                    <h4 class="font-semibold">Address</h4>
+                    <p>123 Main Street, Mysore, Karnataka 570001</p>
+                  </div>
+                </div>
+                <div class="flex items-start">
+                  <i class="fas fa-clock text-xl text-blue-600 mt-1 mr-4"></i>
+                  <div>
+                    <h4 class="font-semibold">Business Hours</h4>
+                    <p>Monday - Saturday: 9:00 AM - 7:00 PM</p>
+                    <p>Sunday: Closed</p>
+                  </div>
+                </div>
+                <div class="flex items-start">
+                  <i
+                    class="fas fa-phone-alt text-xl text-blue-600 mt-1 mr-4"
+                  ></i>
+                  <div>
+                    <h4 class="font-semibold">Phone</h4>
+                    <p>+91 98765 43210</p>
+                  </div>
+                </div>
+                <div class="flex items-start">
+                  <i
+                    class="fas fa-envelope text-xl text-blue-600 mt-1 mr-4"
+                  ></i>
+                  <div>
+                    <h4 class="font-semibold">Email</h4>
+                    <p>info@fixmyphone.com</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="h-96 rounded-xl overflow-hidden shadow-lg">
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15570.627791834164!2d76.6401666!3d12.2958448!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3b07cf0e2d19d655%3A0xc3b8a1c8b35c05b1!2sMysuru%2C%2C%20Karnataka%2C%20India!5e0!3m2!1sen!2sse!4v1694356411559!5m2!1sen!2sse"
+                width="100%"
+                height="100%"
+                style="border: 0"
+                allowfullscreen=""
+                loading="lazy"
+              ></iframe>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12">
+      <div class="container mx-auto px-6 text-center">
+        <p>&copy; 2024 fixmyPhone. All rights reserved.</p>
+        <div class="mt-4">
+          <a
+            href="privacy.html"
+            class="hover:underline text-sm text-gray-400 mx-2"
+            >Privacy Policy</a
+          >
+          <a
+            href="terms.html"
+            class="hover:underline text-sm text-gray-400 mx-2"
+            >Terms of Service</a
+          >
+        </div>
+      </div>
+    </footer>
+
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+      import {
+        getFirestore,
+        collection,
+        addDoc,
+        serverTimestamp,
+      } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+      let firebaseConfig =
+        typeof __firebase_config !== "undefined"
+          ? JSON.parse(__firebase_config)
+          : null;
+      let appId = typeof __app_id !== "undefined" ? __app_id : null;
+      let db = null;
+      let isLocalTestMode = false;
+
+      if (!firebaseConfig || !appId) {
+        console.warn(
+          "Firebase configuration not found. Activating local testing mode. Form submissions will be simulated and NOT saved to the database."
+        );
+        isLocalTestMode = true;
+        firebaseConfig = {
+          apiKey: "dummy-key",
+          authDomain: "dummy-project.firebaseapp.com",
+          projectId: "dummy-project",
+        };
+        appId = "local-test";
+      }
+
+      try {
+        const app = initializeApp(firebaseConfig);
+        db = getFirestore(app);
+      } catch (e) {
+        console.error("Firebase initialization failed:", e);
+        db = null;
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        const contactForm = document.getElementById("contact-form");
+        const submitButton = document.getElementById("submit-contact");
+        const submitText = document.getElementById("submit-text");
+        const submitSpinner = document.getElementById("submit-spinner");
+        const formError = document.getElementById("form-error");
+        const formSuccess = document.getElementById("form-success");
+
+        contactForm.addEventListener("submit", async (e) => {
+          e.preventDefault();
+          if (!contactForm.checkValidity()) {
+            formError.textContent = "Please fill out all required fields.";
+            formError.classList.remove("hidden");
+            return;
+          }
+          const emailValue = document.getElementById("email").value;
+          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailValue)) {
+            formError.textContent = "Please enter a valid email address.";
+            formError.classList.remove("hidden");
+            return;
+          }
+
+          formError.classList.add("hidden");
+          submitButton.disabled = true;
+          submitText.textContent = "Sending...";
+          submitSpinner.classList.remove("hidden");
+
+          if (isLocalTestMode) {
+            console.log("LOCAL TEST MODE: Simulating a successful submission.");
+            setTimeout(() => {
+              formSuccess.classList.remove("hidden");
+              submitButton.disabled = false;
+              submitText.textContent = "Send Message";
+              submitSpinner.classList.add("hidden");
+              contactForm.reset();
+            }, 1500);
+            return;
+          }
+
+          if (!db) {
+            formError.textContent =
+              "Database is not configured correctly. Cannot submit.";
+            formError.classList.remove("hidden");
+            submitButton.disabled = false;
+            submitText.textContent = "Send Message";
+            submitSpinner.classList.add("hidden");
+            return;
+          }
+
+          const formData = {
+            name: document.getElementById("name").value,
+            email: emailValue,
+            phone: document.getElementById("phone").value,
+            message: document.getElementById("message").value,
+            submittedAt: serverTimestamp(),
+            status: "New Inquiry",
+          };
+
+          try {
+            const collectionRef = collection(
+              db,
+              "artifacts",
+              appId,
+              "public",
+              "data",
+              "contactInquiries"
+            );
+            await addDoc(collectionRef, formData);
+
+            formSuccess.classList.remove("hidden");
+            contactForm.reset();
+          } catch (error) {
+            console.error("Error adding document: ", error);
+            formError.textContent =
+              "Could not send message. Please try again later.";
+            formError.classList.remove("hidden");
+          } finally {
+            submitButton.disabled = false;
+            submitText.textContent = "Send Message";
+            submitSpinner.classList.add("hidden");
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
