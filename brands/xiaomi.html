@@ -6,17 +6,37 @@
     <title>Xiaomi Phone Repair - fixmyPhone</title>
     <meta
       name="description"
-      content="Select your Xiaomi, Redmi, or Poco model and the repair services you need. We fix screens, batteries, and more for all recent Xiaomi models in Mysore."
+      content="Select your Xiaomi model and the repair services you need. We fix screens, batteries, and more for all recent Xiaomi models in Mysore."
     />
 
-    <!-- Tailwind CSS and Font Awesome -->
+    <!-- Google Analytics -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-G0DKJDMNGL"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+
+      gtag("config", "G-G0DKJDMNGL");
+    </script>
+
+    <!-- Tailwind CSS, Font Awesome, and Google Fonts -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
     <style>
-      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
       body {
         font-family: "Inter", sans-serif;
         scroll-behavior: smooth;
@@ -91,7 +111,7 @@
           <span class="text-2xl font-bold text-blue-600">fixmyPhone</span>
         </a>
         <a
-          href="../index.html#contact"
+          href="../contact.html"
           class="bg-blue-600 text-white font-semibold py-2 px-4 rounded-full shadow-md hover:bg-blue-700 transition-colors duration-200"
           >Contact Us</a
         >
@@ -175,7 +195,22 @@
             id="model-grid"
             class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6"
           >
-            <!-- Xiaomi models will be injected by JavaScript -->
+            <!-- Models and manual entry card will be injected by JavaScript -->
+          </div>
+          <!-- Manual Model Entry Form -->
+          <div id="manual-model-form" class="hidden mt-6 max-w-sm mx-auto">
+            <input
+              type="text"
+              id="manual-model-input"
+              placeholder="Enter your phone model (e.g., Xiaomi 12 Pro)"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <button
+              id="manual-model-confirm"
+              class="mt-2 w-full bg-gray-600 text-white font-semibold py-2 rounded-lg hover:bg-gray-700 transition-colors"
+            >
+              Confirm Model
+            </button>
           </div>
         </section>
 
@@ -191,7 +226,22 @@
               <span id="selected-model-name" class="text-blue-600"></span>
             </h2>
             <div id="service-list" class="space-y-4">
-              <!-- Services will be injected by JavaScript -->
+              <!-- Services and manual entry card will be injected by JavaScript -->
+            </div>
+            <!-- Manual Service Entry Form -->
+            <div id="manual-service-form" class="hidden mt-4">
+              <textarea
+                id="manual-service-input"
+                rows="3"
+                placeholder="Please describe the issue you are having with your device..."
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              ></textarea>
+              <button
+                id="manual-service-add"
+                class="mt-2 bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-gray-700 transition-colors"
+              >
+                Add to Summary
+              </button>
             </div>
           </section>
 
@@ -407,26 +457,30 @@
       }
 
       document.addEventListener("DOMContentLoaded", () => {
-        // --- XIAOMI SPECIFIC DATA ---
+        // --- XIAOMI SPECIFIC DATA (UPDATED) ---
         const repairData = {
-          "Xiaomi 13 Pro": [
+          "Xiaomi 14 Ultra": [
+            "Screen Replacement",
+            "Battery Replacement",
+            "Back Glass Repair",
+            "Camera Repair",
+          ],
+          "Redmi Note 13 Pro+": [
             "Screen Replacement",
             "Battery Replacement",
             "Camera Repair",
+          ],
+          "Xiaomi 13 Pro": [
+            "Screen Replacement",
+            "Battery Replacement",
+            "Back Glass Repair",
+          ],
+          "Poco X6 Pro": [
+            "Screen Replacement",
+            "Battery Replacement",
             "Charging Port Repair",
           ],
-          "Redmi Note 12 Pro": [
-            "Screen Replacement",
-            "Battery Replacement",
-            "Back Glass Repair",
-          ],
-          "Poco F5": ["Screen Replacement", "Battery Replacement"],
-          "Redmi 12C": ["Screen Replacement", "Battery Replacement"],
-          "Xiaomi 12 Pro": [
-            "Screen Replacement",
-            "Battery Replacement",
-            "Back Glass Repair",
-          ],
+          "Redmi 13C": ["Screen Replacement", "Battery Replacement"],
         };
         const serviceDescriptions = {
           "Screen Replacement":
@@ -439,7 +493,17 @@
             "Fixes issues with blurry photos, focus problems, or black screens.",
           "Charging Port Repair":
             "Solves problems with charging or connecting accessories.",
+          "Water Damage Diagnostic":
+            "Comprehensive check for liquid-damaged devices.",
         };
+        const genericServices = [
+          "Screen Replacement",
+          "Battery Replacement",
+          "Charging Port Repair",
+          "Camera Repair",
+          "Back Glass Repair",
+          "Water Damage Diagnostic",
+        ];
         // --- END OF XIAOMI SPECIFIC DATA ---
 
         let selectedModel = null;
@@ -474,6 +538,18 @@
         const submitText = document.getElementById("submit-text");
         const submitSpinner = document.getElementById("submit-spinner");
         const formError = document.getElementById("form-error");
+        const manualModelForm = document.getElementById("manual-model-form");
+        const manualModelInput = document.getElementById("manual-model-input");
+        const manualModelConfirm = document.getElementById(
+          "manual-model-confirm"
+        );
+        const manualServiceForm = document.getElementById(
+          "manual-service-form"
+        );
+        const manualServiceInput = document.getElementById(
+          "manual-service-input"
+        );
+        const manualServiceAdd = document.getElementById("manual-service-add");
 
         const createProgressBar = (currentStep) => {
           const steps = [
@@ -529,17 +605,25 @@
             )}" alt="${model}" class="w-20 h-20 object-contain mb-2 rounded-md"/><span class="font-semibold text-sm text-center">${model}</span>`;
             modelGrid.appendChild(card);
           }
+          const manualCard = document.createElement("div");
+          manualCard.id = "manual-model-card";
+          manualCard.className =
+            "model-card cursor-pointer flex flex-col items-center justify-center p-4 bg-gray-100 rounded-xl shadow-sm border-2 border-dashed border-gray-400 hover:border-blue-500 hover:bg-gray-200";
+          manualCard.innerHTML = `<i class="fas fa-question-circle text-4xl text-gray-500 mb-2"></i><span class="font-semibold text-sm text-center text-gray-700">Model Not Listed?</span>`;
+          modelGrid.appendChild(manualCard);
         };
+
         const renderServices = () => {
           serviceList.innerHTML = "";
-          const availableServices = repairData[selectedModel] || [];
+          const availableServices =
+            repairData[selectedModel] || genericServices;
           availableServices.forEach((service) => {
             const isSelected = selectedServices.includes(service);
             const card = document.createElement("div");
             card.className =
               "service-card flex items-center justify-between p-4 bg-white rounded-lg shadow-sm border";
             card.innerHTML = `<div><h4 class="font-bold">${service}</h4><p class="text-sm text-gray-600">${
-              serviceDescriptions[service] || ""
+              serviceDescriptions[service] || "Custom repair request."
             }</p></div><button data-service="${service}" class="add-remove-btn text-sm font-semibold py-2 px-4 rounded-full transition-colors ${
               isSelected
                 ? "bg-red-100 text-red-700 hover:bg-red-200"
@@ -547,7 +631,14 @@
             }">${isSelected ? "Remove" : "Add"}</button>`;
             serviceList.appendChild(card);
           });
+          const manualServiceCard = document.createElement("div");
+          manualServiceCard.id = "manual-service-card";
+          manualServiceCard.className =
+            "service-card flex flex-col items-center justify-center p-4 bg-gray-100 rounded-lg shadow-sm border-2 border-dashed border-gray-400 cursor-pointer hover:border-blue-500 hover:bg-gray-200";
+          manualServiceCard.innerHTML = `<i class="fas fa-tools text-3xl text-gray-500 mb-2"></i><h4 class="font-bold text-gray-700">Other Repair Issue?</h4><p class="text-sm text-gray-600 text-center mt-1">Click to describe your problem.</p>`;
+          serviceList.appendChild(manualServiceCard);
         };
+
         const renderSummary = () => {
           if (selectedServices.length === 0) {
             summaryContent.classList.add("hidden");
@@ -570,15 +661,17 @@
           }
         };
 
-        const handleModelSelect = (e) => {
-          const card = e.target.closest(".model-card");
-          if (!card) return;
-          selectedModel = card.dataset.model;
+        const handleModelSelect = (modelName) => {
+          selectedModel = modelName;
           selectedServices = [];
           document
             .querySelectorAll(".model-card")
             .forEach((c) => c.classList.remove("selected"));
-          card.classList.add("selected");
+          const card = document.querySelector(
+            `.model-card[data-model="${modelName}"]`
+          );
+          if (card) card.classList.add("selected");
+
           selectedModelName.textContent = selectedModel;
           repairAndSummarySection.classList.remove("hidden");
           renderServices();
@@ -588,18 +681,63 @@
             block: "start",
           });
         };
-        const handleServiceToggle = (e) => {
-          const button = e.target.closest(".add-remove-btn");
-          if (!button) return;
-          const service = button.dataset.service;
-          if (selectedServices.includes(service)) {
-            selectedServices = selectedServices.filter((s) => s !== service);
+
+        modelGrid.addEventListener("click", (e) => {
+          const card = e.target.closest(".model-card");
+          if (!card) return;
+          if (card.id === "manual-model-card") {
+            manualModelForm.classList.remove("hidden");
+            manualModelInput.focus();
+            manualModelForm.scrollIntoView({
+              behavior: "smooth",
+              block: "center",
+            });
           } else {
-            selectedServices.push(service);
+            handleModelSelect(card.dataset.model);
           }
-          renderServices();
-          renderSummary();
-        };
+        });
+
+        manualModelConfirm.addEventListener("click", () => {
+          const modelName = manualModelInput.value.trim();
+          if (modelName) {
+            handleModelSelect(modelName);
+            manualModelForm.classList.add("hidden");
+            manualModelInput.value = "";
+          }
+        });
+
+        manualServiceAdd.addEventListener("click", () => {
+          const serviceDescription = manualServiceInput.value.trim();
+          if (
+            serviceDescription &&
+            !selectedServices.includes(serviceDescription)
+          ) {
+            selectedServices.push(serviceDescription);
+            renderSummary();
+            manualServiceInput.value = "";
+            manualServiceForm.classList.add("hidden");
+          }
+        });
+
+        serviceList.addEventListener("click", (e) => {
+          const addRemoveButton = e.target.closest(".add-remove-btn");
+          const manualCard = e.target.closest("#manual-service-card");
+
+          if (addRemoveButton) {
+            const service = addRemoveButton.dataset.service;
+            if (selectedServices.includes(service)) {
+              selectedServices = selectedServices.filter((s) => s !== service);
+            } else {
+              selectedServices.push(service);
+            }
+            renderServices();
+            renderSummary();
+          } else if (manualCard) {
+            manualServiceForm.classList.remove("hidden");
+            manualServiceInput.focus();
+          }
+        });
+
         const handleSummaryRemove = (e) => {
           const button = e.target.closest("[data-service-remove]");
           if (!button) return;
@@ -703,8 +841,7 @@
         });
 
         renderModelGrid();
-        modelGrid.addEventListener("click", handleModelSelect);
-        serviceList.addEventListener("click", handleServiceToggle);
+
         summaryList.addEventListener("click", handleSummaryRemove);
         getQuoteBtn.addEventListener("click", handleGetQuote);
         closeModalButton.addEventListener("click", hideModal);

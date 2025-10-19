@@ -3,11 +3,26 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Nothing Phone Repair - fixmyPhone</title>
+    <title>Realme Phone Repair - fixmyPhone</title>
     <meta
       name="description"
-      content="Select your Nothing model and the repair services you need. We fix screens, batteries, and more for all recent Nothing models in Mysore."
+      content="Select your Realme model and the repair services you need. We fix screens, batteries, and more for all recent Realme models in Mysore."
     />
+
+    <!-- Google Analytics -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-G0DKJDMNGL"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+
+      gtag("config", "G-G0DKJDMNGL");
+    </script>
 
     <!-- Tailwind CSS, Font Awesome, and Google Fonts -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -96,7 +111,7 @@
           <span class="text-2xl font-bold text-blue-600">fixmyPhone</span>
         </a>
         <a
-          href="../index.html#contact"
+          href="../contact.html"
           class="bg-blue-600 text-white font-semibold py-2 px-4 rounded-full shadow-md hover:bg-blue-700 transition-colors duration-200"
           >Contact Us</a
         >
@@ -162,7 +177,7 @@
               ><i class="fas fa-chevron-right mx-2 text-xs"></i>
             </li>
             <li class="flex items-center">
-              <span class="text-gray-900 font-semibold">Nothing</span>
+              <span class="text-gray-900 font-semibold">Realme</span>
             </li>
           </ol>
         </nav>
@@ -170,7 +185,7 @@
         <!-- Step 1: Model Selection -->
         <section id="model-selection">
           <h1 class="text-3xl lg:text-4xl font-extrabold text-center mb-4">
-            Select Your Nothing Phone to Begin Repair
+            Select Your Realme Phone to Begin Repair
           </h1>
           <p class="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
             Choose your model from the list below to see available repair
@@ -187,7 +202,7 @@
             <input
               type="text"
               id="manual-model-input"
-              placeholder="Enter your phone model (e.g., Phone (1))"
+              placeholder="Enter your phone model (e.g., Realme GT Master Edition)"
               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <button
@@ -442,20 +457,20 @@
       }
 
       document.addEventListener("DOMContentLoaded", () => {
-        // --- NOTHING SPECIFIC DATA (UPDATED) ---
+        // --- REALME SPECIFIC DATA (UPDATED) ---
         const repairData = {
-          "Phone (2a)": [
+          "Realme 12 Pro+": [
             "Screen Replacement",
             "Battery Replacement",
-            "Back Glass Repair",
-          ],
-          "Phone (2)": [
-            "Screen Replacement",
-            "Battery Replacement",
-            "Back Glass Repair",
             "Camera Repair",
           ],
-          "Phone (1)": [
+          "Realme GT 2 Pro": [
+            "Screen Replacement",
+            "Battery Replacement",
+            "Back Glass Repair",
+          ],
+          "Realme Narzo 70 Pro": ["Screen Replacement", "Battery Replacement"],
+          "Realme C67": [
             "Screen Replacement",
             "Battery Replacement",
             "Charging Port Repair",
@@ -483,7 +498,7 @@
           "Back Glass Repair",
           "Water Damage Diagnostic",
         ];
-        // --- END OF NOTHING SPECIFIC DATA ---
+        // --- END OF REALME SPECIFIC DATA ---
 
         let selectedModel = null;
         let selectedServices = [];
