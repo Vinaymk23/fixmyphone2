@@ -5,29 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin Dashboard - fixmyPhone</title>
     <meta name="robots" content="noindex, nofollow" />
-
-    <!-- Google Analytics -->
-    <script
-      async
-      src="https://www.googletagmanager.com/gtag/js?id=G-G0DKJDMNGL"
-    ></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag() {
-        dataLayer.push(arguments);
-      }
-      gtag("js", new Date());
-
-      gtag("config", "G-G0DKJDMNGL");
-    </script>
-
     <script src="https://cdn.tailwindcss.com"></script>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
     <style>
-      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
       body {
         font-family: "Inter", sans-serif;
       }
@@ -121,23 +108,47 @@
         orderBy,
       } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-      let firebaseConfig =
-        typeof __firebase_config !== "undefined"
-          ? JSON.parse(__firebase_config)
-          : null;
-      let appId = typeof __app_id !== "undefined" ? __app_id : null;
+      // --- START DEBUGGING BLOCK ---
+      console.log("Admin Page: Script loaded. Checking for Firebase config...");
+
+      // This is the configuration for your Firebase project.
+      // It's designed to be public and is required to connect to the database.
+      const firebaseConfig = {
+        apiKey: "AIzaSyAPwUjYPD5CzGIfT_6KqkpdLKnUNURSIs8",
+        authDomain: "fixmyphone-website-889b5.firebaseapp.com",
+        projectId: "fixmyphone-website-889b5",
+        storageBucket: "fixmyphone-website-889b5.appspot.com",
+        messagingSenderId: "619306240303",
+        appId: "1:619306240303:web:f1e2445eec7bba1a09b9da",
+        measurementId: "G-7HZ9D236TS",
+      };
+
+      let appId = "fixmyphone-website-889b5"; // Using project ID as a stable App ID
       let db;
 
-      if (firebaseConfig && appId) {
+      if (firebaseConfig && firebaseConfig.apiKey) {
+        console.log(
+          "Admin Page: Firebase config object found. Attempting to initialize Firebase..."
+        );
         try {
           const app = initializeApp(firebaseConfig);
           db = getFirestore(app);
+          console.log(
+            "Admin Page: Firebase initialized successfully. Database connection should be available."
+          );
         } catch (e) {
-          console.error("Firebase init failed on admin page:", e);
+          console.error(
+            "Admin Page: CRITICAL - Firebase initialization FAILED.",
+            e
+          );
+          db = null;
         }
       } else {
-        console.error("Firebase config not available on admin page.");
+        console.error(
+          "Admin Page: CRITICAL - firebaseConfig object is missing or invalid!"
+        );
       }
+      // --- END DEBUGGING BLOCK ---
 
       const loginScreen = document.getElementById("login-screen");
       const dashboardContent = document.getElementById("dashboard-content");
@@ -148,7 +159,7 @@
       const loadingState = document.getElementById("loading-state");
       const emptyState = document.getElementById("empty-state");
 
-      const ADMIN_PASSWORD = "fixmyphoneadmin2025"; // Simple password, can be changed.
+      const ADMIN_PASSWORD = "fixmyphoneadmin2025";
 
       function showDashboard() {
         loginScreen.classList.add("hidden");
@@ -176,18 +187,22 @@
 
       logoutButton.addEventListener("click", showLogin);
 
-      // Check session storage on page load
       if (sessionStorage.getItem("isAdminAuthenticated") === "true") {
         showDashboard();
       }
 
       function fetchQuotes() {
         if (!db) {
-          logErrorToFirestore(errorMessage);
+          console.error(
+            "Admin Dashboard: Cannot fetch quotes because database connection failed."
+          );
           loadingState.innerHTML =
-            '<p class="text-red-500">Database connection failed.</p>';
+            '<p class="text-red-500">Database connection failed. Check console for errors.</p>';
           return;
         }
+        console.log(
+          "Admin Dashboard: Fetching quote requests from Firestore..."
+        );
         const quotesCollectionRef = collection(
           db,
           "artifacts",
@@ -205,9 +220,13 @@
             if (snapshot.empty) {
               emptyState.classList.remove("hidden");
               quotesTableBody.innerHTML = "";
+              console.log("Admin Dashboard: No quote requests found.");
             } else {
               emptyState.classList.add("hidden");
               quotesTableBody.innerHTML = "";
+              console.log(
+                `Admin Dashboard: Found ${snapshot.size} quote request(s).`
+              );
               snapshot.forEach((docSnap) => {
                 const quote = docSnap.data();
                 const quoteId = docSnap.id;
@@ -259,7 +278,7 @@
             }
           },
           (error) => {
-            console.error("Error fetching quotes: ", error);
+            console.error("Admin Dashboard: Error fetching quotes: ", error);
             loadingState.innerHTML =
               '<p class="text-red-500">Error fetching data. Check console.</p>';
           }

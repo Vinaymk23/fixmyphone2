@@ -263,34 +263,47 @@
         serverTimestamp,
       } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-      let firebaseConfig =
-        typeof __firebase_config !== "undefined"
-          ? JSON.parse(__firebase_config)
-          : null;
-      let appId = typeof __app_id !== "undefined" ? __app_id : null;
+      // --- START DEBUGGING BLOCK ---
+      console.log(
+        "Contact Page: Script loaded. Checking for Firebase config..."
+      );
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyAPwUjYPD5CzGIfT_6KqkpdLKnUNURSIs8",
+        authDomain: "fixmyphone-website-889b5.firebaseapp.com",
+        projectId: "fixmyphone-website-889b5",
+        storageBucket: "fixmyphone-website-889b5.appspot.com",
+        messagingSenderId: "619306240303",
+        appId: "1:619306240303:web:f1e2445eec7bba1a09b9da",
+        measurementId: "G-7HZ9D236TS",
+      };
+
+      let appId = "fixmyphone-website-889b5";
       let db = null;
-      let isLocalTestMode = false;
 
-      if (!firebaseConfig || !appId) {
-        console.warn(
-          "Firebase configuration not found. Activating local testing mode. Form submissions will be simulated and NOT saved to the database."
+      if (firebaseConfig && firebaseConfig.apiKey) {
+        console.log(
+          "Contact Page: Firebase config object found. Attempting to initialize Firebase..."
         );
-        isLocalTestMode = true;
-        firebaseConfig = {
-          apiKey: "dummy-key",
-          authDomain: "dummy-project.firebaseapp.com",
-          projectId: "dummy-project",
-        };
-        appId = "local-test";
+        try {
+          const app = initializeApp(firebaseConfig);
+          db = getFirestore(app);
+          console.log(
+            "Contact Page: Firebase initialized successfully. Database connection should be available."
+          );
+        } catch (e) {
+          console.error(
+            "Contact Page: CRITICAL - Firebase initialization FAILED.",
+            e
+          );
+          db = null;
+        }
+      } else {
+        console.error(
+          "Contact Page: CRITICAL - firebaseConfig object is missing or invalid!"
+        );
       }
-
-      try {
-        const app = initializeApp(firebaseConfig);
-        db = getFirestore(app);
-      } catch (e) {
-        console.error("Firebase initialization failed:", e);
-        db = null;
-      }
+      // --- END DEBUGGING BLOCK ---
 
       document.addEventListener("DOMContentLoaded", () => {
         const contactForm = document.getElementById("contact-form");
@@ -319,19 +332,10 @@
           submitText.textContent = "Sending...";
           submitSpinner.classList.remove("hidden");
 
-          if (isLocalTestMode) {
-            console.log("LOCAL TEST MODE: Simulating a successful submission.");
-            setTimeout(() => {
-              formSuccess.classList.remove("hidden");
-              submitButton.disabled = false;
-              submitText.textContent = "Send Message";
-              submitSpinner.classList.add("hidden");
-              contactForm.reset();
-            }, 1500);
-            return;
-          }
-
           if (!db) {
+            console.error(
+              "Contact Form: Cannot submit, database connection is not available."
+            );
             formError.textContent =
               "Database is not configured correctly. Cannot submit.";
             formError.classList.remove("hidden");
@@ -351,6 +355,9 @@
           };
 
           try {
+            console.log(
+              "Contact Form: Attempting to save data to Firestore..."
+            );
             const collectionRef = collection(
               db,
               "artifacts",
@@ -361,10 +368,11 @@
             );
             await addDoc(collectionRef, formData);
 
+            console.log("Contact Form: Data saved successfully.");
             formSuccess.classList.remove("hidden");
             contactForm.reset();
           } catch (error) {
-            console.error("Error adding document: ", error);
+            console.error("Contact Form: Error adding document: ", error);
             formError.textContent =
               "Could not send message. Please try again later.";
             formError.classList.remove("hidden");
