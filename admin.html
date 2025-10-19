@@ -183,6 +183,7 @@
 
       function fetchQuotes() {
         if (!db) {
+          logErrorToFirestore(errorMessage);
           loadingState.innerHTML =
             '<p class="text-red-500">Database connection failed.</p>';
           return;
