@@ -427,36 +427,45 @@
         serverTimestamp,
       } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-      let firebaseConfig =
-        typeof __firebase_config !== "undefined"
-          ? JSON.parse(__firebase_config)
-          : null;
-      let appId = typeof __app_id !== "undefined" ? __app_id : null;
+      // --- Firebase Configuration ---
+      console.log("[Vivo] Script loaded. Initializing Firebase..."); // Debug Log
+      const firebaseConfig = {
+        // Embed config directly
+        apiKey: "AIzaSyAPwUjYPD5CzGIfT_6KqkpdLKnUNURSIs8",
+        authDomain: "fixmyphone-website-889b5.firebaseapp.com",
+        projectId: "fixmyphone-website-889b5",
+        storageBucket: "fixmyphone-website-889b5.appspot.com",
+        messagingSenderId: "619306240303",
+        appId: "1:619306240303:web:f1e2445eec7bba1a09b9da",
+      };
+      const appId = "fixmyphone-website-889b5"; // Use projectId consistently
       let db = null;
-      let isLocalTestMode = false;
-
-      if (!firebaseConfig || !appId) {
-        console.warn(
-          "Firebase configuration not found. Activating local testing mode. Form submissions will be simulated and NOT saved to the database."
-        );
-        isLocalTestMode = true;
-        firebaseConfig = {
-          apiKey: "dummy-key",
-          authDomain: "dummy-project.firebaseapp.com",
-          projectId: "dummy-project",
-        };
-        appId = "local-test";
-      }
+      let isLocalTestMode = false; // Keep this in case needed for local tests outside Canvas
 
       try {
+        console.log(
+          "[Vivo] Attempting Firebase initialization with embedded config..."
+        ); // Debug Log
         const app = initializeApp(firebaseConfig);
         db = getFirestore(app);
+        console.log(
+          "[Vivo] Firebase initialized successfully. db object:",
+          db ? "Exists" : "Failed"
+        ); // Debug Log
       } catch (e) {
-        console.error("Firebase initialization failed:", e);
-        db = null;
+        console.error("[Vivo] Firebase initialization failed:", e);
+        db = null; // Ensure db is null on failure
+        isLocalTestMode = true; // Fallback to local test mode if init fails
+        console.warn(
+          "[Vivo] Firebase init failed, activating local test mode."
+        );
       }
 
       document.addEventListener("DOMContentLoaded", () => {
+        // --- START DEBUGGING BLOCK ---
+        console.log("[Vivo] DOMContentLoaded event fired.");
+        // --- END DEBUGGING BLOCK ---
+
         // --- VIVO SPECIFIC DATA (UPDATED) ---
         const repairData = {
           "Vivo X100 Pro": [
@@ -546,6 +555,9 @@
         const manualServiceAdd = document.getElementById("manual-service-add");
 
         const createProgressBar = (currentStep) => {
+          // --- START DEBUGGING BLOCK ---
+          // console.log(`[Vivo] createProgressBar called with currentStep: ${currentStep}`);
+          // --- END DEBUGGING BLOCK ---
           const steps = [
             "Select Brand",
             "Choose Repairs",
@@ -572,6 +584,13 @@
             quoteModalContent.insertAdjacentHTML("afterbegin", progressBarHTML);
         };
         const showModal = (device, services) => {
+          // --- START DEBUGGING BLOCK ---
+          console.log(
+            `[Vivo] showModal called. Device: ${device}, Services: ${services.join(
+              ", "
+            )}`
+          );
+          // --- END DEBUGGING BLOCK ---
           deviceInput.value = device;
           issueInput.value = services.join(", ");
           createProgressBar(3);
@@ -580,6 +599,9 @@
           document.body.style.overflow = "hidden";
         };
         const hideModal = () => {
+          // --- START DEBUGGING BLOCK ---
+          console.log("[Vivo] hideModal called.");
+          // --- END DEBUGGING BLOCK ---
           quoteModal.classList.add("invisible", "opacity-0");
           quoteModalContent.classList.add("scale-95");
           document.body.style.overflow = "";
@@ -587,6 +609,9 @@
         };
 
         const renderModelGrid = () => {
+          // --- START DEBUGGING BLOCK ---
+          console.log("[Vivo] renderModelGrid called.");
+          // --- END DEBUGGING BLOCK ---
           modelGrid.innerHTML = "";
           for (const model in repairData) {
             const card = document.createElement("div");
@@ -608,6 +633,11 @@
         };
 
         const renderServices = () => {
+          // --- START DEBUGGING BLOCK ---
+          console.log(
+            `[Vivo] renderServices called for model: ${selectedModel}`
+          );
+          // --- END DEBUGGING BLOCK ---
           serviceList.innerHTML = "";
           const availableServices =
             repairData[selectedModel] || genericServices;
@@ -634,6 +664,11 @@
         };
 
         const renderSummary = () => {
+          // --- START DEBUGGING BLOCK ---
+          console.log(
+            `[Vivo] renderSummary called. Selected services: ${selectedServices.length}`
+          );
+          // --- END DEBUGGING BLOCK ---
           if (selectedServices.length === 0) {
             summaryContent.classList.add("hidden");
             summaryPlaceholder.classList.remove("hidden");
@@ -656,6 +691,11 @@
         };
 
         const handleModelSelect = (modelName) => {
+          // --- START DEBUGGING BLOCK ---
+          console.log(
+            `[Vivo] handleModelSelect called with model: ${modelName}`
+          );
+          // --- END DEBUGGING BLOCK ---
           selectedModel = modelName;
           selectedServices = [];
           document
@@ -693,6 +733,9 @@
 
         manualModelConfirm.addEventListener("click", () => {
           const modelName = manualModelInput.value.trim();
+          // --- START DEBUGGING BLOCK ---
+          console.log(`[Vivo] Manual model confirmed: ${modelName}`);
+          // --- END DEBUGGING BLOCK ---
           if (modelName) {
             handleModelSelect(modelName);
             manualModelForm.classList.add("hidden");
@@ -702,6 +745,9 @@
 
         manualServiceAdd.addEventListener("click", () => {
           const serviceDescription = manualServiceInput.value.trim();
+          // --- START DEBUGGING BLOCK ---
+          console.log(`[Vivo] Manual service added: ${serviceDescription}`);
+          // --- END DEBUGGING BLOCK ---
           if (
             serviceDescription &&
             !selectedServices.includes(serviceDescription)
@@ -727,6 +773,9 @@
             renderServices();
             renderSummary();
           } else if (manualCard) {
+            // --- START DEBUGGING BLOCK ---
+            console.log("[Vivo] 'Other Repair Issue?' card clicked.");
+            // --- END DEBUGGING BLOCK ---
             manualServiceForm.classList.remove("hidden");
             manualServiceInput.focus();
           }
@@ -736,32 +785,36 @@
           const button = e.target.closest("[data-service-remove]");
           if (!button) return;
           const service = button.dataset.serviceRemove;
+          // --- START DEBUGGING BLOCK ---
+          console.log(`[Vivo] Remove from summary clicked for: ${service}`);
+          // --- END DEBUGGING BLOCK ---
           selectedServices = selectedServices.filter((s) => s !== service);
           renderServices();
           renderSummary();
         };
-        const handleGetQuote = () => showModal(selectedModel, selectedServices);
+        const handleGetQuote = () => {
+          // --- START DEBUGGING BLOCK ---
+          console.log("[Vivo] Get Quote button clicked.");
+          // --- END DEBUGGING BLOCK ---
+          showModal(selectedModel, selectedServices);
+        };
 
         quoteForm.addEventListener("submit", async (e) => {
           e.preventDefault();
+          // --- START DEBUGGING BLOCK ---
+          console.log("[Vivo] Quote form submitted.");
+          // --- END DEBUGGING BLOCK ---
           if (!quoteForm.checkValidity()) {
+            console.log("[Vivo] Form invalid (HTML5 check). Showing error."); // Debug Log
             formError.textContent = "Please fill out all required fields.";
             formError.classList.remove("hidden");
             return;
           }
-          const phoneValue = document.getElementById("phone").value;
-          const emailValue = document.getElementById("email").value;
-          if (!/^\d{10}$/.test(phoneValue)) {
-            formError.textContent =
-              "Please enter a valid 10-digit Indian phone number.";
-            formError.classList.remove("hidden");
-            return;
-          }
-          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailValue)) {
-            formError.textContent = "Please enter a valid email address.";
-            formError.classList.remove("hidden");
-            return;
-          }
+          // --- START DEBUGGING BLOCK ---
+          console.log(
+            "[Vivo] Form appears valid. Disabling button, showing spinner."
+          );
+          // --- END DEBUGGING BLOCK ---
           formError.classList.add("hidden");
           submitButton.disabled = true;
           submitText.textContent = "Submitting...";
@@ -776,13 +829,19 @@
             return;
           }
 
+          // --- START DEBUGGING BLOCK ---
+          console.log(
+            "[Vivo] Checking db object before Firestore operation:",
+            db ? "Exists" : "NULL"
+          );
+          // --- END DEBUGGING BLOCK ---
           if (!db) {
             formError.textContent =
               "Database is not configured correctly. Cannot submit.";
-            formError.classList.remove("hidden");
-            submitButton.disabled = false;
-            submitText.textContent = "Submit Request";
-            submitSpinner.classList.add("hidden");
+            console.error(
+              "[Vivo] CRITICAL: db object is null. Submission aborted."
+            );
+            // --- END DEBUGGING BLOCK ---
             return;
           }
 
@@ -795,6 +854,9 @@
             submittedAt: serverTimestamp(),
             status: "New",
           };
+          // --- START DEBUGGING BLOCK ---
+          console.log("[Vivo] Form data prepared:", formData);
+          // --- END DEBUGGING BLOCK ---
           const timeoutPromise = new Promise((_, reject) =>
             setTimeout(
               () => reject(new Error("Request timed out after 10 seconds.")),
@@ -803,6 +865,11 @@
           );
 
           try {
+            const collectionPath = `artifacts/${appId}/public/data/quoteRequests`;
+            console.log(
+              "[Vivo] Attempting to add document to collection:",
+              collectionPath
+            ); // Debug Log
             const collectionRef = collection(
               db,
               "artifacts",
@@ -815,11 +882,22 @@
             const docRef = await Promise.race([addDocPromise, timeoutPromise]);
 
             if (!docRef || !docRef.id) {
+              console.error(
+                "[Vivo] Firestore addDoc returned invalid response:",
+                docRef
+              ); // Debug Log
               throw new Error("Database returned an invalid response.");
             }
+            // --- START DEBUGGING BLOCK ---
+            console.log(
+              "[Vivo] Document added successfully. Doc ID:",
+              docRef.id
+            );
+            // --- END DEBUGGING BLOCK ---
             window.location.href = `../quote-confirmation.html?id=${docRef.id}`;
           } catch (error) {
-            console.error("Error or timeout adding document: ", error);
+            console.error("[Vivo] Error or timeout adding document: ", error); // Debug Log
+            console.log("[Vivo] Full error object:", error); // Log the full error object
             if (error.message && error.message.includes("timed out")) {
               formError.textContent =
                 "Request timed out. Please check your network and try again.";
@@ -842,6 +920,9 @@
         quoteModal.addEventListener("click", (e) => {
           if (e.target === quoteModal) hideModal();
         });
+        // --- START DEBUGGING BLOCK ---
+        console.log("[Vivo] Initial setup complete.");
+        // --- END DEBUGGING BLOCK ---
       });
     </script>
   </body>

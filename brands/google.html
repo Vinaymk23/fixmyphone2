@@ -427,36 +427,45 @@
         serverTimestamp,
       } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-      let firebaseConfig =
-        typeof __firebase_config !== "undefined"
-          ? JSON.parse(__firebase_config)
-          : null;
-      let appId = typeof __app_id !== "undefined" ? __app_id : null;
+      // --- Firebase Configuration ---
+      console.log("[Google] Script loaded. Initializing Firebase..."); // Debug Log
+      const firebaseConfig = {
+        // Embed config directly
+        apiKey: "AIzaSyAPwUjYPD5CzGIfT_6KqkpdLKnUNURSIs8",
+        authDomain: "fixmyphone-website-889b5.firebaseapp.com",
+        projectId: "fixmyphone-website-889b5",
+        storageBucket: "fixmyphone-website-889b5.appspot.com",
+        messagingSenderId: "619306240303",
+        appId: "1:619306240303:web:f1e2445eec7bba1a09b9da",
+      };
+      const appId = "fixmyphone-website-889b5"; // Use projectId consistently
       let db = null;
-      let isLocalTestMode = false;
-
-      if (!firebaseConfig || !appId) {
-        console.warn(
-          "Firebase configuration not found. Activating local testing mode. Form submissions will be simulated and NOT saved to the database."
-        );
-        isLocalTestMode = true;
-        firebaseConfig = {
-          apiKey: "dummy-key",
-          authDomain: "dummy-project.firebaseapp.com",
-          projectId: "dummy-project",
-        };
-        appId = "local-test";
-      }
+      let isLocalTestMode = false; // Keep this in case needed for local tests outside Canvas
 
       try {
+        console.log(
+          "[Google] Attempting Firebase initialization with embedded config..."
+        ); // Debug Log
         const app = initializeApp(firebaseConfig);
         db = getFirestore(app);
+        console.log(
+          "[Google] Firebase initialized successfully. db object:",
+          db ? "Exists" : "Failed"
+        ); // Debug Log
       } catch (e) {
-        console.error("Firebase initialization failed:", e);
-        db = null;
+        console.error("[Google] Firebase initialization failed:", e);
+        db = null; // Ensure db is null on failure
+        isLocalTestMode = true; // Fallback to local test mode if init fails
+        console.warn(
+          "[Google] Firebase init failed, activating local test mode."
+        );
       }
 
       document.addEventListener("DOMContentLoaded", () => {
+        // --- START DEBUGGING BLOCK ---
+        console.log("[Google] DOMContentLoaded event fired.");
+        // --- END DEBUGGING BLOCK ---
+
         // --- GOOGLE SPECIFIC DATA (UPDATED) ---
         const repairData = {
           "Pixel 8 Pro": [
@@ -562,6 +571,9 @@
         const manualServiceAdd = document.getElementById("manual-service-add");
 
         const createProgressBar = (currentStep) => {
+          // --- START DEBUGGING BLOCK ---
+          // console.log(`[Google] createProgressBar called with currentStep: ${currentStep}`);
+          // --- END DEBUGGING BLOCK ---
           const steps = [
             "Select Brand",
             "Choose Repairs",
@@ -588,6 +600,13 @@
             quoteModalContent.insertAdjacentHTML("afterbegin", progressBarHTML);
         };
         const showModal = (device, services) => {
+          // --- START DEBUGGING BLOCK ---
+          console.log(
+            `[Google] showModal called. Device: ${device}, Services: ${services.join(
+              ", "
+            )}`
+          );
+          // --- END DEBUGGING BLOCK ---
           deviceInput.value = device;
           issueInput.value = services.join(", ");
           createProgressBar(3);
@@ -596,6 +615,9 @@
           document.body.style.overflow = "hidden";
         };
         const hideModal = () => {
+          // --- START DEBUGGING BLOCK ---
+          console.log("[Google] hideModal called.");
+          // --- END DEBUGGING BLOCK ---
           quoteModal.classList.add("invisible", "opacity-0");
           quoteModalContent.classList.add("scale-95");
           document.body.style.overflow = "";
@@ -603,6 +625,9 @@
         };
 
         const renderModelGrid = () => {
+          // --- START DEBUGGING BLOCK ---
+          console.log("[Google] renderModelGrid called.");
+          // --- END DEBUGGING BLOCK ---
           modelGrid.innerHTML = "";
           for (const model in repairData) {
             const card = document.createElement("div");
@@ -624,6 +649,11 @@
         };
 
         const renderServices = () => {
+          // --- START DEBUGGING BLOCK ---
+          console.log(
+            `[Google] renderServices called for model: ${selectedModel}`
+          );
+          // --- END DEBUGGING BLOCK ---
           serviceList.innerHTML = "";
           const availableServices =
             repairData[selectedModel] || genericServices;
@@ -650,6 +680,11 @@
         };
 
         const renderSummary = () => {
+          // --- START DEBUGGING BLOCK ---
+          console.log(
+            `[Google] renderSummary called. Selected services: ${selectedServices.length}`
+          );
+          // --- END DEBUGGING BLOCK ---
           if (selectedServices.length === 0) {
             summaryContent.classList.add("hidden");
             summaryPlaceholder.classList.remove("hidden");
@@ -672,6 +707,11 @@
         };
 
         const handleModelSelect = (modelName) => {
+          // --- START DEBUGGING BLOCK ---
+          console.log(
+            `[Google] handleModelSelect called with model: ${modelName}`
+          );
+          // --- END DEBUGGING BLOCK ---
           selectedModel = modelName;
           selectedServices = [];
           document
@@ -696,6 +736,9 @@
           const card = e.target.closest(".model-card");
           if (!card) return;
           if (card.id === "manual-model-card") {
+            // --- START DEBUGGING BLOCK ---
+            console.log("[Google] 'Model Not Listed?' card clicked.");
+            // --- END DEBUGGING BLOCK ---
             manualModelForm.classList.remove("hidden");
             manualModelInput.focus();
             manualModelForm.scrollIntoView({
@@ -709,6 +752,9 @@
 
         manualModelConfirm.addEventListener("click", () => {
           const modelName = manualModelInput.value.trim();
+          // --- START DEBUGGING BLOCK ---
+          console.log(`[Google] Manual model confirmed: ${modelName}`);
+          // --- END DEBUGGING BLOCK ---
           if (modelName) {
             handleModelSelect(modelName);
             manualModelForm.classList.add("hidden");
@@ -718,6 +764,9 @@
 
         manualServiceAdd.addEventListener("click", () => {
           const serviceDescription = manualServiceInput.value.trim();
+          // --- START DEBUGGING BLOCK ---
+          console.log(`[Google] Manual service added: ${serviceDescription}`);
+          // --- END DEBUGGING BLOCK ---
           if (
             serviceDescription &&
             !selectedServices.includes(serviceDescription)
@@ -735,6 +784,11 @@
 
           if (addRemoveButton) {
             const service = addRemoveButton.dataset.service;
+            // --- START DEBUGGING BLOCK ---
+            console.log(
+              `[Google] Add/Remove button clicked for service: ${service}`
+            );
+            // --- END DEBUGGING BLOCK ---
             if (selectedServices.includes(service)) {
               selectedServices = selectedServices.filter((s) => s !== service);
             } else {
@@ -743,6 +797,9 @@
             renderServices();
             renderSummary();
           } else if (manualCard) {
+            // --- START DEBUGGING BLOCK ---
+            console.log("[Google] 'Other Repair Issue?' card clicked.");
+            // --- END DEBUGGING BLOCK ---
             manualServiceForm.classList.remove("hidden");
             manualServiceInput.focus();
           }
@@ -752,15 +809,27 @@
           const button = e.target.closest("[data-service-remove]");
           if (!button) return;
           const service = button.dataset.serviceRemove;
+          // --- START DEBUGGING BLOCK ---
+          console.log(`[Google] Remove from summary clicked for: ${service}`);
+          // --- END DEBUGGING BLOCK ---
           selectedServices = selectedServices.filter((s) => s !== service);
           renderServices();
           renderSummary();
         };
-        const handleGetQuote = () => showModal(selectedModel, selectedServices);
+        const handleGetQuote = () => {
+          // --- START DEBUGGING BLOCK ---
+          console.log("[Google] Get Quote button clicked.");
+          // --- END DEBUGGING BLOCK ---
+          showModal(selectedModel, selectedServices);
+        };
 
         quoteForm.addEventListener("submit", async (e) => {
           e.preventDefault();
+          // --- START DEBUGGING BLOCK ---
+          console.log("[Google] Quote form submitted.");
+          // --- END DEBUGGING BLOCK ---
           if (!quoteForm.checkValidity()) {
+            console.log("[Google] Form invalid (HTML5 check). Showing error."); // Debug Log
             formError.textContent = "Please fill out all required fields.";
             formError.classList.remove("hidden");
             return;
@@ -768,23 +837,32 @@
           const phoneValue = document.getElementById("phone").value;
           const emailValue = document.getElementById("email").value;
           if (!/^\d{10}$/.test(phoneValue)) {
+            console.log("[Google] Form invalid (Phone regex). Showing error."); // Debug Log
             formError.textContent =
               "Please enter a valid 10-digit Indian phone number.";
             formError.classList.remove("hidden");
             return;
           }
           if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailValue)) {
+            console.log("[Google] Form invalid (Email regex). Showing error."); // Debug Log
             formError.textContent = "Please enter a valid email address.";
             formError.classList.remove("hidden");
             return;
           }
+          // --- START DEBUGGING BLOCK ---
+          console.log(
+            "[Google] Form appears valid. Disabling button, showing spinner."
+          );
+          // --- END DEBUGGING BLOCK ---
           formError.classList.add("hidden");
           submitButton.disabled = true;
           submitText.textContent = "Submitting...";
           submitSpinner.classList.remove("hidden");
 
           if (isLocalTestMode) {
-            console.log("LOCAL TEST MODE: Simulating a successful submission.");
+            console.log(
+              "[Google] LOCAL TEST MODE: Simulating a successful submission."
+            );
             setTimeout(() => {
               const fakeDocId = `test_${new Date().getTime()}`;
               window.location.href = `../quote-confirmation.html?id=${fakeDocId}`;
@@ -792,6 +870,12 @@
             return;
           }
 
+          // --- START DEBUGGING BLOCK ---
+          console.log(
+            "[Google] Checking db object before Firestore operation:",
+            db ? "Exists" : "NULL"
+          );
+          // --- END DEBUGGING BLOCK ---
           if (!db) {
             formError.textContent =
               "Database is not configured correctly. Cannot submit.";
@@ -799,6 +883,11 @@
             submitButton.disabled = false;
             submitText.textContent = "Submit Request";
             submitSpinner.classList.add("hidden");
+            // --- START DEBUGGING BLOCK ---
+            console.error(
+              "[Google] CRITICAL: db object is null. Submission aborted."
+            );
+            // --- END DEBUGGING BLOCK ---
             return;
           }
 
@@ -811,6 +900,9 @@
             submittedAt: serverTimestamp(),
             status: "New",
           };
+          // --- START DEBUGGING BLOCK ---
+          console.log("[Google] Form data prepared:", formData);
+          // --- END DEBUGGING BLOCK ---
           const timeoutPromise = new Promise((_, reject) =>
             setTimeout(
               () => reject(new Error("Request timed out after 10 seconds.")),
@@ -819,6 +911,11 @@
           );
 
           try {
+            const collectionPath = `artifacts/${appId}/public/data/quoteRequests`;
+            console.log(
+              "[Google] Attempting to add document to collection:",
+              collectionPath
+            ); // Debug Log
             const collectionRef = collection(
               db,
               "artifacts",
@@ -831,19 +928,32 @@
             const docRef = await Promise.race([addDocPromise, timeoutPromise]);
 
             if (!docRef || !docRef.id) {
+              console.error(
+                "[Google] Firestore addDoc returned invalid response:",
+                docRef
+              ); // Debug Log
               throw new Error("Database returned an invalid response.");
             }
+            // --- START DEBUGGING BLOCK ---
+            console.log(
+              "[Google] Document added successfully. Doc ID:",
+              docRef.id
+            );
+            // --- END DEBUGGING BLOCK ---
             window.location.href = `../quote-confirmation.html?id=${docRef.id}`;
           } catch (error) {
-            console.error("Error or timeout adding document: ", error);
+            console.error("[Google] Error or timeout adding document: ", error); // Debug Log
+            console.log("[Google] Full error object:", error); // Log the full error object
             if (error.message && error.message.includes("timed out")) {
               formError.textContent =
                 "Request timed out. Please check your network and try again.";
             } else {
               formError.textContent =
-                "Could not submit request. An unexpected error occurred.";
+                "Could not submit request. An unexpected error occurred." +
+                (error.message ? `(${error.message})` : "");
             }
             formError.classList.remove("hidden");
+            // Re-enable button ONLY on failure
             submitButton.disabled = false;
             submitText.textContent = "Submit Request";
             submitSpinner.classList.add("hidden");
@@ -858,6 +968,9 @@
         quoteModal.addEventListener("click", (e) => {
           if (e.target === quoteModal) hideModal();
         });
+        // --- START DEBUGGING BLOCK ---
+        console.log("[Google] Initial setup complete.");
+        // --- END DEBUGGING BLOCK ---
       });
     </script>
   </body>

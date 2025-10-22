@@ -360,7 +360,7 @@
             phone: document.getElementById("phone").value,
             message: document.getElementById("message").value,
             submittedAt: serverTimestamp(),
-            status: "New Inquiry",
+            status: "New", // Changed from "New Inquiry" for consistency
           };
 
           try {
@@ -373,7 +373,7 @@
               appId,
               "public",
               "data",
-              "contactInquiries"
+              "quoteRequests" // Changed from "contactInquiries"
             );
             await addDoc(collectionRef, formData);
 

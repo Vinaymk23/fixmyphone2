@@ -6,7 +6,7 @@
     <title>Apple iPhone Repair - fixmyPhone</title>
     <meta
       name="description"
-      content="Select your Apple iPhone model and the repair services you need. We fix screens, batteries, and more for all recent iPhone models in Mysore."
+      content="Select your iPhone model and the repair services you need. We fix screens, batteries, and more for all recent iPhone models in Mysore."
     />
 
     <!-- Google Analytics -->
@@ -67,32 +67,32 @@
       .progress-bar .step-connector {
         flex-grow: 1;
         height: 4px;
-        background-color: #e5e7eb;
+        background-color: #e5e7eb; /* gray-200 */
         transition: background-color 0.3s;
       }
       .progress-bar .step-node {
-        width: 2rem;
+        width: 2rem; /* h-8 w-8 */
         height: 2rem;
-        border-radius: 9999px;
+        border-radius: 9999px; /* rounded-full */
         display: flex;
         align-items: center;
         justify-content: center;
-        font-weight: 600;
+        font-weight: 600; /* font-semibold */
         transition: background-color 0.3s, color 0.3s, border-color 0.3s;
       }
       .progress-bar .completed .step-node,
       .progress-bar .completed .step-connector {
-        background-color: #2563eb;
+        background-color: #2563eb; /* bg-blue-600 */
         color: white;
       }
       .progress-bar .active .step-node {
-        background-color: #eff6ff;
-        color: #2563eb;
-        border: 2px solid #2563eb;
+        background-color: #eff6ff; /* bg-blue-50 */
+        color: #2563eb; /* text-blue-600 */
+        border: 2px solid #2563eb; /* border-blue-600 */
       }
       .progress-bar .upcoming .step-node {
-        background-color: #e5e7eb;
-        color: #6b7280;
+        background-color: #e5e7eb; /* bg-gray-200 */
+        color: #6b7280; /* text-gray-500 */
       }
       .quote-modal {
         transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
@@ -185,7 +185,7 @@
         <!-- Step 1: Model Selection -->
         <section id="model-selection">
           <h1 class="text-3xl lg:text-4xl font-extrabold text-center mb-4">
-            Select Your Apple iPhone to Begin Repair
+            Select Your iPhone to Begin Repair
           </h1>
           <p class="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
             Choose your model from the list below to see available repair
@@ -202,7 +202,7 @@
             <input
               type="text"
               id="manual-model-input"
-              placeholder="Enter your phone model (e.g., iPhone XR)"
+              placeholder="Enter your phone model (e.g., iPhone X)"
               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <button
@@ -251,6 +251,7 @@
               <h3 class="text-xl font-bold mb-4 text-gray-800">
                 Your Repair Summary
               </h3>
+              <!-- Content area for summary -->
               <div id="summary-content" class="hidden">
                 <div class="mb-4">
                   <p
@@ -274,6 +275,7 @@
                   </ul>
                 </div>
               </div>
+              <!-- Placeholder shown when nothing is selected -->
               <p id="summary-placeholder" class="text-gray-500 italic">
                 Select a model and add repairs to see them here.
               </p>
@@ -318,6 +320,7 @@
         id="quote-modal-content"
         class="bg-white p-8 rounded-xl shadow-lg w-full max-w-lg mx-4 transform scale-95 transition-transform duration-300 modal-content-transition"
       >
+        <!-- Modal Title and Close Button -->
         <div class="flex justify-between items-center mb-4">
           <h3 id="modal-title" class="text-2xl font-bold text-gray-800">
             Get a Free Quote
@@ -329,10 +332,12 @@
             &times;
           </button>
         </div>
+        <!-- Modal Subtitle -->
         <p id="modal-subtitle" class="text-gray-600 mb-6">
           Please provide your details to receive a quote for your selected
           services.
         </p>
+        <!-- Quote Form -->
         <form id="quote-form" novalidate>
           <div class="mb-4">
             <label for="name" class="block text-gray-700 font-semibold mb-2"
@@ -427,62 +432,45 @@
         serverTimestamp,
       } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-      // --- START DEBUGGING BLOCK ---
-      console.log("[Apple] Script loaded. Checking for Firebase config...");
-      // --- END DEBUGGING BLOCK ---
-
-      let firebaseConfig =
-        typeof __firebase_config !== "undefined"
-          ? JSON.parse(__firebase_config)
-          : null;
-      let appId = typeof __app_id !== "undefined" ? __app_id : null;
+      // --- Firebase Configuration ---
+      console.log("[Apple] Script loaded. Initializing Firebase..."); // Debug Log
+      const firebaseConfig = {
+        // Embed config directly
+        apiKey: "AIzaSyAPwUjYPD5CzGIfT_6KqkpdLKnUNURSIs8",
+        authDomain: "fixmyphone-website-889b5.firebaseapp.com",
+        projectId: "fixmyphone-website-889b5",
+        storageBucket: "fixmyphone-website-889b5.appspot.com",
+        messagingSenderId: "619306240303",
+        appId: "1:619306240303:web:f1e2445eec7bba1a09b9da",
+      };
+      const appId = "fixmyphone-website-889b5"; // Use projectId consistently
       let db = null;
-      let isLocalTestMode = false;
-
-      // --- START DEBUGGING BLOCK ---
-      console.log(
-        "[Apple] __firebase_config:",
-        typeof __firebase_config !== "undefined"
-          ? __firebase_config.substring(0, 50) + "..."
-          : "undefined"
-      );
-      console.log("[Apple] __app_id:", appId);
-      // --- END DEBUGGING BLOCK ---
-
-      if (!firebaseConfig || !appId) {
-        console.warn(
-          "[Apple] Firebase configuration not found via __ variables. Activating local testing mode. Form submissions will be simulated and NOT saved to the database."
-        );
-        isLocalTestMode = true;
-        firebaseConfig = {
-          apiKey: "dummy-key",
-          authDomain: "dummy-project.firebaseapp.com",
-          projectId: "dummy-project",
-        };
-        appId = "local-test";
-      }
+      let isLocalTestMode = false; // Keep this in case needed for local tests outside Canvas
 
       try {
-        // --- START DEBUGGING BLOCK ---
         console.log(
-          "[Apple] Attempting Firebase initialization with config:",
-          firebaseConfig
-        );
-        // --- END DEBUGGING BLOCK ---
+          "[Apple] Attempting Firebase initialization with embedded config..."
+        ); // Debug Log
         const app = initializeApp(firebaseConfig);
         db = getFirestore(app);
-        // --- START DEBUGGING BLOCK ---
         console.log(
           "[Apple] Firebase initialized successfully. db object:",
           db ? "Exists" : "Failed"
-        );
-        // --- END DEBUGGING BLOCK ---
+        ); // Debug Log
       } catch (e) {
         console.error("[Apple] Firebase initialization failed:", e);
-        db = null;
+        db = null; // Ensure db is null on failure
+        isLocalTestMode = true; // Fallback to local test mode if init fails
+        console.warn(
+          "[Apple] Firebase init failed, activating local test mode."
+        );
       }
 
       document.addEventListener("DOMContentLoaded", () => {
+        // --- START DEBUGGING BLOCK ---
+        console.log("[Apple] DOMContentLoaded event fired.");
+        // --- END DEBUGGING BLOCK ---
+
         // --- APPLE SPECIFIC DATA ---
         const repairData = {
           "iPhone 15 Pro Max": [
@@ -490,56 +478,88 @@
             "Battery Replacement",
             "Back Glass Repair",
             "Camera Repair",
+            "Charging Port Repair",
           ],
           "iPhone 15 Pro": [
             "Screen Replacement",
             "Battery Replacement",
             "Back Glass Repair",
             "Camera Repair",
+            "Charging Port Repair",
           ],
           "iPhone 15 Plus": [
             "Screen Replacement",
             "Battery Replacement",
             "Back Glass Repair",
+            "Camera Repair",
+            "Charging Port Repair",
           ],
           "iPhone 15": [
             "Screen Replacement",
             "Battery Replacement",
             "Back Glass Repair",
+            "Camera Repair",
+            "Charging Port Repair",
           ],
           "iPhone 14 Pro Max": [
             "Screen Replacement",
             "Battery Replacement",
             "Back Glass Repair",
+            "Camera Repair",
+            "Charging Port Repair",
           ],
           "iPhone 14 Pro": [
             "Screen Replacement",
             "Battery Replacement",
             "Back Glass Repair",
+            "Camera Repair",
+            "Charging Port Repair",
           ],
           "iPhone 14 Plus": [
             "Screen Replacement",
             "Battery Replacement",
             "Back Glass Repair",
+            "Camera Repair",
+            "Charging Port Repair",
           ],
           "iPhone 14": [
             "Screen Replacement",
             "Battery Replacement",
             "Back Glass Repair",
+            "Camera Repair",
+            "Charging Port Repair",
           ],
-          "iPhone 13 Pro Max": ["Screen Replacement", "Battery Replacement"],
-          "iPhone 13 Pro": ["Screen Replacement", "Battery Replacement"],
-          "iPhone 13": ["Screen Replacement", "Battery Replacement"],
-          "iPhone 13 mini": ["Screen Replacement", "Battery Replacement"],
-          "iPhone 12 Pro Max": ["Screen Replacement", "Battery Replacement"],
-          "iPhone 12 Pro": ["Screen Replacement", "Battery Replacement"],
-          "iPhone 12": ["Screen Replacement", "Battery Replacement"],
-          "iPhone 11": [
+          "iPhone SE (3rd gen)": [
             "Screen Replacement",
             "Battery Replacement",
             "Charging Port Repair",
           ],
-          "iPhone SE (3rd Gen)": ["Screen Replacement", "Battery Replacement"],
+          "iPhone 13 Pro Max": [
+            "Screen Replacement",
+            "Battery Replacement",
+            "Back Glass Repair",
+            "Camera Repair",
+          ],
+          "iPhone 13 Pro": [
+            "Screen Replacement",
+            "Battery Replacement",
+            "Back Glass Repair",
+            "Camera Repair",
+          ],
+          "iPhone 13": [
+            "Screen Replacement",
+            "Battery Replacement",
+            "Back Glass Repair",
+          ],
+          "iPhone 13 mini": [
+            "Screen Replacement",
+            "Battery Replacement",
+            "Back Glass Repair",
+          ],
+          "iPhone 12 Pro Max": ["Screen Replacement", "Battery Replacement"],
+          "iPhone 12 Pro": ["Screen Replacement", "Battery Replacement"],
+          "iPhone 12": ["Screen Replacement", "Battery Replacement"],
+          "iPhone 12 mini": ["Screen Replacement", "Battery Replacement"],
         };
         const serviceDescriptions = {
           "Screen Replacement":
@@ -568,6 +588,7 @@
         let selectedModel = null;
         let selectedServices = [];
 
+        // DOM Element References
         const modelGrid = document.getElementById("model-grid");
         const repairAndSummarySection = document.getElementById(
           "repair-and-summary-section"
@@ -610,7 +631,11 @@
         );
         const manualServiceAdd = document.getElementById("manual-service-add");
 
+        // --- Functions ---
         const createProgressBar = (currentStep) => {
+          // --- START DEBUGGING BLOCK ---
+          // console.log(`[Apple] createProgressBar called with currentStep: ${currentStep}`);
+          // --- END DEBUGGING BLOCK ---
           const steps = [
             "Select Brand",
             "Choose Repairs",
@@ -624,11 +649,18 @@
             if (stepNum < currentStep) statusClass = "completed";
             else if (stepNum === currentStep) statusClass = "active";
             else statusClass = "upcoming";
-            items += `<li class="${statusClass}"><div class="flex items-center"><div class="step-node">${stepNum}</div>${
-              index < steps.length - 1
-                ? '<div class="step-connector"></div>'
-                : ""
-            }</div><p class="text-sm mt-2 font-semibold">${step}</p></li>`;
+
+            items += `<li class="${statusClass}">
+                    <div class="flex items-center">
+                        <div class="step-node">${stepNum}</div>
+                        ${
+                          index < steps.length - 1
+                            ? '<div class="step-connector"></div>'
+                            : ""
+                        }
+                    </div>
+                    <p class="text-sm mt-2 font-semibold">${step}</p>
+                </li>`;
           });
           const progressBarHTML = `<div class="mb-8 progress-bar"><ol>${items}</ol></div>`;
           const existingBar = quoteModalContent.querySelector(".progress-bar");
@@ -637,68 +669,113 @@
             quoteModalContent.insertAdjacentHTML("afterbegin", progressBarHTML);
         };
         const showModal = (device, services) => {
+          // --- START DEBUGGING BLOCK ---
+          console.log(
+            `[Apple] showModal called. Device: ${device}, Services: ${services.join(
+              ", "
+            )}`
+          );
+          // --- END DEBUGGING BLOCK ---
           deviceInput.value = device;
           issueInput.value = services.join(", ");
-          createProgressBar(3);
+          createProgressBar(3); // Set progress to step 3 when modal opens
           quoteModal.classList.remove("invisible", "opacity-0");
           quoteModalContent.classList.remove("scale-95");
-          document.body.style.overflow = "hidden";
+          document.body.style.overflow = "hidden"; // Prevent background scroll
         };
         const hideModal = () => {
+          // --- START DEBUGGING BLOCK ---
+          console.log("[Apple] hideModal called.");
+          // --- END DEBUGGING BLOCK ---
           quoteModal.classList.add("invisible", "opacity-0");
           quoteModalContent.classList.add("scale-95");
-          document.body.style.overflow = "";
-          formError.classList.add("hidden");
+          document.body.style.overflow = ""; // Restore background scroll
+          formError.classList.add("hidden"); // Hide error on close
         };
 
         const renderModelGrid = () => {
-          modelGrid.innerHTML = "";
+          // --- START DEBUGGING BLOCK ---
+          console.log("[Apple] renderModelGrid called.");
+          // --- END DEBUGGING BLOCK ---
+          modelGrid.innerHTML = ""; // Clear existing models
+          // Add model cards
           for (const model in repairData) {
             const card = document.createElement("div");
             card.className =
               "model-card cursor-pointer flex flex-col items-center p-4 bg-white rounded-xl shadow-md border-2 border-transparent";
             card.dataset.model = model;
-            card.innerHTML = `<img src="https://placehold.co/100x100/E0E7FF/1E40AF?text=${model.replace(
-              / /g,
-              "+"
-            )}" alt="${model}" class="w-20 h-20 object-contain mb-2 rounded-md"/><span class="font-semibold text-sm text-center">${model}</span>`;
+            card.innerHTML = `
+              <img src="https://placehold.co/100x100/E0E7FF/1E40AF?text=${model.replace(
+                / /g,
+                "+"
+              )}" alt="${model}" class="w-20 h-20 object-contain mb-2 rounded-md"/>
+              <span class="font-semibold text-sm text-center">${model}</span>
+          `;
             modelGrid.appendChild(card);
           }
+          // Add "Model Not Listed?" card
           const manualCard = document.createElement("div");
           manualCard.id = "manual-model-card";
           manualCard.className =
             "model-card cursor-pointer flex flex-col items-center justify-center p-4 bg-gray-100 rounded-xl shadow-sm border-2 border-dashed border-gray-400 hover:border-blue-500 hover:bg-gray-200";
-          manualCard.innerHTML = `<i class="fas fa-question-circle text-4xl text-gray-500 mb-2"></i><span class="font-semibold text-sm text-center text-gray-700">Model Not Listed?</span>`;
+          manualCard.innerHTML = `
+              <i class="fas fa-question-circle text-4xl text-gray-500 mb-2"></i>
+              <span class="font-semibold text-sm text-center text-gray-700">Model Not Listed?</span>
+          `;
           modelGrid.appendChild(manualCard);
         };
 
         const renderServices = () => {
-          serviceList.innerHTML = "";
+          // --- START DEBUGGING BLOCK ---
+          console.log(
+            `[Apple] renderServices called for model: ${selectedModel}`
+          );
+          // --- END DEBUGGING BLOCK ---
+          serviceList.innerHTML = ""; // Clear existing services
           const availableServices =
             repairData[selectedModel] || genericServices;
+
           availableServices.forEach((service) => {
             const isSelected = selectedServices.includes(service);
             const card = document.createElement("div");
             card.className =
               "service-card flex items-center justify-between p-4 bg-white rounded-lg shadow-sm border";
-            card.innerHTML = `<div><h4 class="font-bold">${service}</h4><p class="text-sm text-gray-600">${
-              serviceDescriptions[service] || "Custom repair request."
-            }</p></div><button data-service="${service}" class="add-remove-btn text-sm font-semibold py-2 px-4 rounded-full transition-colors ${
+            card.innerHTML = `
+              <div>
+                  <h4 class="font-bold">${service}</h4>
+                  <p class="text-sm text-gray-600">${
+                    serviceDescriptions[service] || "Custom repair request."
+                  }</p>
+              </div>
+              <button data-service="${service}" class="add-remove-btn text-sm font-semibold py-2 px-4 rounded-full transition-colors ${
               isSelected
                 ? "bg-red-100 text-red-700 hover:bg-red-200"
                 : "bg-blue-100 text-blue-700 hover:bg-blue-200"
-            }">${isSelected ? "Remove" : "Add"}</button>`;
+            }">
+                  ${isSelected ? "Remove" : "Add"}
+              </button>
+          `;
             serviceList.appendChild(card);
           });
+          // Add "Other Repair Issue?" card
           const manualServiceCard = document.createElement("div");
           manualServiceCard.id = "manual-service-card";
           manualServiceCard.className =
             "service-card flex flex-col items-center justify-center p-4 bg-gray-100 rounded-lg shadow-sm border-2 border-dashed border-gray-400 cursor-pointer hover:border-blue-500 hover:bg-gray-200";
-          manualServiceCard.innerHTML = `<i class="fas fa-tools text-3xl text-gray-500 mb-2"></i><h4 class="font-bold text-gray-700">Other Repair Issue?</h4><p class="text-sm text-gray-600 text-center mt-1">Click to describe your problem.</p>`;
+          manualServiceCard.innerHTML = `
+            <i class="fas fa-tools text-3xl text-gray-500 mb-2"></i>
+            <h4 class="font-bold text-gray-700">Other Repair Issue?</h4>
+            <p class="text-sm text-gray-600 text-center mt-1">Click to describe your problem.</p>
+        `;
           serviceList.appendChild(manualServiceCard);
         };
 
         const renderSummary = () => {
+          // --- START DEBUGGING BLOCK ---
+          console.log(
+            `[Apple] renderSummary called. Selected services: ${selectedServices.length}`
+          );
+          // --- END DEBUGGING BLOCK ---
           if (selectedServices.length === 0) {
             summaryContent.classList.add("hidden");
             summaryPlaceholder.classList.remove("hidden");
@@ -708,11 +785,14 @@
             summaryPlaceholder.classList.add("hidden");
             summaryContent.classList.remove("hidden");
             summaryDeviceName.textContent = selectedModel;
-            summaryList.innerHTML = "";
+            summaryList.innerHTML = ""; // Clear previous summary items
             selectedServices.forEach((service) => {
               const li = document.createElement("li");
               li.className = "flex justify-between items-center text-sm";
-              li.innerHTML = `<span>${service}</span><button data-service-remove="${service}" class="text-red-500 hover:text-red-700 font-bold text-lg">&times;</button>`;
+              li.innerHTML = `
+                  <span>${service}</span>
+                  <button data-service-remove="${service}" class="text-red-500 hover:text-red-700 font-bold text-lg">&times;</button>
+              `;
               summaryList.appendChild(li);
             });
             getQuoteBtn.disabled = false;
@@ -721,8 +801,15 @@
         };
 
         const handleModelSelect = (modelName) => {
+          // --- START DEBUGGING BLOCK ---
+          console.log(
+            `[Apple] handleModelSelect called with model: ${modelName}`
+          );
+          // --- END DEBUGGING BLOCK ---
           selectedModel = modelName;
-          selectedServices = [];
+          selectedServices = []; // Reset services when model changes
+
+          // Update UI highlighting
           document
             .querySelectorAll(".model-card")
             .forEach((c) => c.classList.remove("selected"));
@@ -731,20 +818,27 @@
           );
           if (card) card.classList.add("selected");
 
+          // Show repair section, render services, update summary
           selectedModelName.textContent = selectedModel;
           repairAndSummarySection.classList.remove("hidden");
           renderServices();
           renderSummary();
+          // Scroll to the repair section smoothly
           repairAndSummarySection.scrollIntoView({
             behavior: "smooth",
             block: "start",
           });
         };
 
+        // --- Event Listeners ---
         modelGrid.addEventListener("click", (e) => {
           const card = e.target.closest(".model-card");
           if (!card) return;
+
           if (card.id === "manual-model-card") {
+            // --- START DEBUGGING BLOCK ---
+            console.log("[Apple] 'Model Not Listed?' card clicked.");
+            // --- END DEBUGGING BLOCK ---
             manualModelForm.classList.remove("hidden");
             manualModelInput.focus();
             manualModelForm.scrollIntoView({
@@ -758,23 +852,29 @@
 
         manualModelConfirm.addEventListener("click", () => {
           const modelName = manualModelInput.value.trim();
+          // --- START DEBUGGING BLOCK ---
+          console.log(`[Apple] Manual model confirmed: ${modelName}`);
+          // --- END DEBUGGING BLOCK ---
           if (modelName) {
             handleModelSelect(modelName);
-            manualModelForm.classList.add("hidden");
-            manualModelInput.value = "";
+            manualModelForm.classList.add("hidden"); // Hide form after confirmation
+            manualModelInput.value = ""; // Clear input
           }
         });
 
         manualServiceAdd.addEventListener("click", () => {
           const serviceDescription = manualServiceInput.value.trim();
+          // --- START DEBUGGING BLOCK ---
+          console.log(`[Apple] Manual service added: ${serviceDescription}`);
+          // --- END DEBUGGING BLOCK ---
           if (
             serviceDescription &&
             !selectedServices.includes(serviceDescription)
           ) {
             selectedServices.push(serviceDescription);
             renderSummary();
-            manualServiceInput.value = "";
-            manualServiceForm.classList.add("hidden");
+            manualServiceInput.value = ""; // Clear textarea
+            manualServiceForm.classList.add("hidden"); // Hide form
           }
         });
 
@@ -784,69 +884,99 @@
 
           if (addRemoveButton) {
             const service = addRemoveButton.dataset.service;
+            // --- START DEBUGGING BLOCK ---
+            console.log(
+              `[Apple] Add/Remove button clicked for service: ${service}`
+            );
+            // --- END DEBUGGING BLOCK ---
             if (selectedServices.includes(service)) {
               selectedServices = selectedServices.filter((s) => s !== service);
             } else {
               selectedServices.push(service);
             }
-            renderServices();
+            renderServices(); // Re-render to update button text/style
             renderSummary();
           } else if (manualCard) {
+            // --- START DEBUGGING BLOCK ---
+            console.log("[Apple] 'Other Repair Issue?' card clicked.");
+            // --- END DEBUGGING BLOCK ---
             manualServiceForm.classList.remove("hidden");
             manualServiceInput.focus();
           }
         });
 
+        // Event listener for removing service directly from the summary
         const handleSummaryRemove = (e) => {
           const button = e.target.closest("[data-service-remove]");
           if (!button) return;
           const service = button.dataset.serviceRemove;
+          // --- START DEBUGGING BLOCK ---
+          console.log(`[Apple] Remove from summary clicked for: ${service}`);
+          // --- END DEBUGGING BLOCK ---
           selectedServices = selectedServices.filter((s) => s !== service);
-          renderServices();
-          renderSummary();
+          renderServices(); // Update the service list buttons
+          renderSummary(); // Update the summary list
         };
-        const handleGetQuote = () => showModal(selectedModel, selectedServices);
+        summaryList.addEventListener("click", handleSummaryRemove);
 
+        // Event listener for the main "Get Quote" button
+        const handleGetQuote = () => {
+          // --- START DEBUGGING BLOCK ---
+          console.log("[Apple] Get Quote button clicked.");
+          // --- END DEBUGGING BLOCK ---
+          showModal(selectedModel, selectedServices);
+        };
+        getQuoteBtn.addEventListener("click", handleGetQuote);
+
+        // Modal close listeners
+        closeModalButton.addEventListener("click", hideModal);
+        quoteModal.addEventListener("click", (e) => {
+          if (e.target === quoteModal) hideModal(); // Close if background clicked
+        });
+
+        // Modal Form Submission
         quoteForm.addEventListener("submit", async (e) => {
-          e.preventDefault();
+          e.preventDefault(); // Prevent default page reload
           // --- START DEBUGGING BLOCK ---
           console.log("[Apple] Quote form submitted.");
           // --- END DEBUGGING BLOCK ---
+
+          // Basic HTML5 validation
           if (!quoteForm.checkValidity()) {
+            console.log("[Apple] Form invalid (HTML5 check). Showing error."); // Debug Log
             formError.textContent = "Please fill out all required fields.";
             formError.classList.remove("hidden");
-            // --- START DEBUGGING BLOCK ---
-            console.log("[Apple] Form invalid (HTML5 validation).");
-            // --- END DEBUGGING BLOCK ---
             return;
           }
+
+          // More specific validation (e.g., phone format)
           const phoneValue = document.getElementById("phone").value;
           const emailValue = document.getElementById("email").value;
           if (!/^\d{10}$/.test(phoneValue)) {
+            // Basic 10-digit check
+            console.log("[Apple] Form invalid (Phone regex). Showing error."); // Debug Log
             formError.textContent =
               "Please enter a valid 10-digit Indian phone number.";
             formError.classList.remove("hidden");
-            // --- START DEBUGGING BLOCK ---
-            console.log("[Apple] Form invalid (Phone regex).");
-            // --- END DEBUGGING BLOCK ---
             return;
           }
           if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailValue)) {
+            // Basic email regex
+            console.log("[Apple] Form invalid (Email regex). Showing error."); // Debug Log
             formError.textContent = "Please enter a valid email address.";
             formError.classList.remove("hidden");
-            // --- START DEBUGGING BLOCK ---
-            console.log("[Apple] Form invalid (Email regex).");
-            // --- END DEBUGGING BLOCK ---
             return;
           }
-          formError.classList.add("hidden");
+
+          // --- START DEBUGGING BLOCK ---
+          console.log(
+            "[Apple] Form appears valid. Disabling button, showing spinner."
+          );
+          // --- END DEBUGGING BLOCK ---
+          formError.classList.add("hidden"); // Hide previous errors
           submitButton.disabled = true;
           submitText.textContent = "Submitting...";
           submitSpinner.classList.remove("hidden");
-
-          // --- START DEBUGGING BLOCK ---
-          console.log("[Apple] isLocalTestMode:", isLocalTestMode);
-          // --- END DEBUGGING BLOCK ---
 
           if (isLocalTestMode) {
             console.log(
@@ -855,13 +985,13 @@
             setTimeout(() => {
               const fakeDocId = `test_${new Date().getTime()}`;
               window.location.href = `../quote-confirmation.html?id=${fakeDocId}`;
-            }, 1500);
+            }, 1500); // Simulate network delay
             return;
           }
 
           // --- START DEBUGGING BLOCK ---
           console.log(
-            "[Apple] Checking db object before submission:",
+            "[Apple] Checking db object before Firestore operation:",
             db ? "Exists" : "NULL"
           );
           // --- END DEBUGGING BLOCK ---
@@ -873,23 +1003,27 @@
             submitText.textContent = "Submit Request";
             submitSpinner.classList.add("hidden");
             // --- START DEBUGGING BLOCK ---
-            console.error("[Apple] Submission aborted: db object is null.");
+            console.error(
+              "[Apple] CRITICAL: db object is null. Submission aborted."
+            );
             // --- END DEBUGGING BLOCK ---
             return;
           }
 
           const formData = {
             name: document.getElementById("name").value,
-            phone: phoneValue,
-            email: emailValue,
+            phone: phoneValue, // Use validated value
+            email: emailValue, // Use validated value
             device: deviceInput.value,
             services: issueInput.value,
             submittedAt: serverTimestamp(),
-            status: "New",
+            status: "New", // Default status
           };
           // --- START DEBUGGING BLOCK ---
           console.log("[Apple] Form data prepared:", formData);
           // --- END DEBUGGING BLOCK ---
+
+          // Add a timeout for the Firestore operation
           const timeoutPromise = new Promise((_, reject) =>
             setTimeout(
               () => reject(new Error("Request timed out after 10 seconds.")),
@@ -898,13 +1032,11 @@
           );
 
           try {
-            // --- START DEBUGGING BLOCK ---
             const collectionPath = `artifacts/${appId}/public/data/quoteRequests`;
             console.log(
               "[Apple] Attempting to add document to collection:",
               collectionPath
-            );
-            // --- END DEBUGGING BLOCK ---
+            ); // Debug Log
             const collectionRef = collection(
               db,
               "artifacts",
@@ -914,55 +1046,52 @@
               "quoteRequests"
             );
             const addDocPromise = addDoc(collectionRef, formData);
+
+            // Race the addDoc operation against the timeout
             const docRef = await Promise.race([addDocPromise, timeoutPromise]);
 
             if (!docRef || !docRef.id) {
-              // --- START DEBUGGING BLOCK ---
               console.error(
                 "[Apple] Firestore addDoc returned invalid response:",
                 docRef
-              );
-              // --- END DEBUGGING BLOCK ---
+              ); // Debug Log
               throw new Error("Database returned an invalid response.");
             }
+
             // --- START DEBUGGING BLOCK ---
             console.log(
               "[Apple] Document added successfully. Doc ID:",
               docRef.id
             );
             // --- END DEBUGGING BLOCK ---
+            // Redirect ONLY on success
             window.location.href = `../quote-confirmation.html?id=${docRef.id}`;
           } catch (error) {
-            console.error("[Apple] Error or timeout adding document: ", error); // Keep original error log
-            // --- START DEBUGGING BLOCK ---
-            console.log("[Apple] Full error object:", error); // Log the full error
-            // --- END DEBUGGING BLOCK ---
+            console.error("[Apple] Error or timeout adding document: ", error); // Debug Log
+            console.log("[Apple] Full error object:", error); // Log the full error object
+
             if (error.message && error.message.includes("timed out")) {
               formError.textContent =
                 "Request timed out. Please check your network and try again.";
             } else {
               formError.textContent =
                 "Could not submit request. An unexpected error occurred. " +
-                (error.message ? `(${error.message})` : ""); // Add error message
+                (error.message ? `(${error.message})` : "");
             }
             formError.classList.remove("hidden");
+            // Re-enable button ONLY on failure
             submitButton.disabled = false;
             submitText.textContent = "Submit Request";
             submitSpinner.classList.add("hidden");
           }
         });
 
-        // Add event listeners for modal interactions
-        summaryList.addEventListener("click", handleSummaryRemove);
-        getQuoteBtn.addEventListener("click", handleGetQuote);
-        closeModalButton.addEventListener("click", hideModal);
-        quoteModal.addEventListener("click", (e) => {
-          if (e.target === quoteModal) hideModal();
-        });
-
-        // Initialize the model grid display on page load
-        renderModelGrid(); // <<< THIS IS THE FIX
-      }); // End of DOMContentLoaded listener
+        // Initial render
+        renderModelGrid();
+        // --- START DEBUGGING BLOCK ---
+        console.log("[Apple] Initial setup complete.");
+        // --- END DEBUGGING BLOCK ---
+      });
     </script>
   </body>
 </html>

@@ -252,33 +252,38 @@
         serverTimestamp,
       } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-      let firebaseConfig =
-        typeof __firebase_config !== "undefined"
-          ? JSON.parse(__firebase_config)
-          : null;
-      let appId = typeof __app_id !== "undefined" ? __app_id : null;
+      // --- Firebase Configuration ---
+      console.log("[Repair] Script loaded. Initializing Firebase..."); // Debug Log
+      const firebaseConfig = {
+        // Embed config directly
+        apiKey: "AIzaSyAPwUjYPD5CzGIfT_6KqkpdLKnUNURSIs8",
+        authDomain: "fixmyphone-website-889b5.firebaseapp.com",
+        projectId: "fixmyphone-website-889b5",
+        storageBucket: "fixmyphone-website-889b5.appspot.com",
+        messagingSenderId: "619306240303",
+        appId: "1:619306240303:web:f1e2445eec7bba1a09b9da",
+      };
+      const appId = "fixmyphone-website-889b5"; // Use projectId consistently
       let db = null;
-      let isLocalTestMode = false;
-
-      if (!firebaseConfig || !appId) {
-        console.warn(
-          "Firebase config not found. Activating local testing mode."
-        );
-        isLocalTestMode = true;
-        firebaseConfig = {
-          apiKey: "dummy",
-          authDomain: "dummy.firebaseapp.com",
-          projectId: "dummy",
-        };
-        appId = "local-test";
-      }
+      let isLocalTestMode = false; // Keep this in case needed for local tests outside Canvas
 
       try {
+        console.log(
+          "[Repair] Attempting Firebase initialization with embedded config..."
+        ); // Debug Log
         const app = initializeApp(firebaseConfig);
         db = getFirestore(app);
+        console.log(
+          "[Repair] Firebase initialized successfully. db object:",
+          db ? "Exists" : "Failed"
+        ); // Debug Log
       } catch (e) {
-        console.error("Firebase init failed", e);
-        db = null;
+        console.error("[Repair] Firebase initialization failed:", e);
+        db = null; // Ensure db is null on failure
+        isLocalTestMode = true; // Fallback to local test mode if init fails
+        console.warn(
+          "[Repair] Firebase init failed, activating local test mode."
+        );
       }
 
       document.addEventListener("DOMContentLoaded", () => {
@@ -392,39 +397,46 @@
 
         inquiryForm.addEventListener("submit", async (e) => {
           e.preventDefault();
+          // --- START DEBUGGING BLOCK ---
+          console.log("[Repair] Inquiry form submitted.");
+          // --- END DEBUGGING BLOCK ---
+
           if (!inquiryForm.checkValidity()) {
+            console.log("[Repair] Form invalid (HTML5 check). Showing error."); // Debug Log
             inquiryFormError.textContent =
               "Please fill out all required fields.";
             inquiryFormError.classList.remove("hidden");
             return;
           }
-          if (
-            !/^\d{10}$/.test(document.getElementById("inquiry-phone").value)
-          ) {
+          const phoneValue = document.getElementById("inquiry-phone").value;
+          if (!/^\d{10}$/.test(phoneValue)) {
+            console.log("[Repair] Form invalid (Phone regex). Showing error."); // Debug Log
             inquiryFormError.textContent =
               "Please enter a valid 10-digit Indian phone number.";
             inquiryFormError.classList.remove("hidden");
             return;
           }
-          if (
-            !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
-              document.getElementById("inquiry-email").value
-            )
-          ) {
+          const emailValue = document.getElementById("inquiry-email").value;
+          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailValue)) {
+            console.log("[Repair] Form invalid (Email regex). Showing error."); // Debug Log
             inquiryFormError.textContent =
               "Please enter a valid email address.";
             inquiryFormError.classList.remove("hidden");
             return;
           }
 
+          console.log(
+            "[Repair] Form appears valid. Disabling button, showing spinner."
+          ); // Debug Log
           inquiryFormError.classList.add("hidden");
           submitInquiryBtn.disabled = true;
           inquirySubmitText.textContent = "Submitting...";
           inquirySubmitSpinner.classList.remove("hidden");
 
           if (isLocalTestMode) {
+            // Check if Firebase init failed
             console.log(
-              "LOCAL TEST MODE: Simulating direct inquiry submission."
+              "LOCAL TEST MODE (or Firebase init failed): Simulating direct inquiry submission."
             );
             setTimeout(() => {
               const fakeDocId = `test_inquiry_${new Date().getTime()}`;
@@ -433,9 +445,13 @@
             return;
           }
 
+          // Double check db object before use
           if (!db) {
+            console.error(
+              "[Repair] CRITICAL: db object is null. Cannot submit."
+            ); // Debug Log
             inquiryFormError.textContent =
-              "Database not configured. Cannot submit.";
+              "Database connection failed. Please try again later.";
             inquiryFormError.classList.remove("hidden");
             submitInquiryBtn.disabled = false;
             inquirySubmitText.textContent = "Submit Inquiry";
@@ -445,8 +461,8 @@
 
           const formData = {
             name: document.getElementById("inquiry-name").value,
-            phone: document.getElementById("inquiry-phone").value,
-            email: document.getElementById("inquiry-email").value,
+            phone: phoneValue, // Use validated value
+            email: emailValue, // Use validated value
             device: `Unlisted Brand: ${
               document.getElementById("inquiry-device").value
             }`,
@@ -454,8 +470,14 @@
             submittedAt: serverTimestamp(),
             status: "New (Unlisted)",
           };
+          console.log("[Repair] Form data prepared:", formData); // Debug Log
 
           try {
+            const collectionPath = `artifacts/${appId}/public/data/quoteRequests`;
+            console.log(
+              "[Repair] Attempting to add document to collection:",
+              collectionPath
+            ); // Debug Log
             const collectionRef = collection(
               db,
               "artifacts",
@@ -464,18 +486,57 @@
               "data",
               "quoteRequests"
             );
-            const docRef = await addDoc(collectionRef, formData);
+
+            // Add a timeout promise
+            const timeoutPromise = new Promise((_, reject) =>
+              setTimeout(
+                () => reject(new Error("Request timed out after 10 seconds.")),
+                10000
+              )
+            );
+
+            const addDocPromise = addDoc(collectionRef, formData);
+
+            // Race the addDoc operation against the timeout
+            const docRef = await Promise.race([addDocPromise, timeoutPromise]);
+
+            if (!docRef || !docRef.id) {
+              console.error(
+                "[Repair] Firestore addDoc returned invalid response:",
+                docRef
+              ); // Debug Log
+              throw new Error("Database returned an invalid response.");
+            }
+
+            console.log(
+              "[Repair] Document added successfully. Doc ID:",
+              docRef.id
+            ); // Debug Log
+            // Redirect ONLY on success
             window.location.href = `quote-confirmation.html?id=${docRef.id}&direct=true`;
           } catch (error) {
-            console.error("Error adding inquiry document: ", error);
-            inquiryFormError.textContent =
-              "Could not submit inquiry. Please try again.";
+            console.error(
+              "[Repair] Error or timeout submitting inquiry:",
+              error
+            ); // Debug Log
+            console.log("[Repair] Full error object:", error); // Log the full error object
+
+            if (error.message && error.message.includes("timed out")) {
+              inquiryFormError.textContent =
+                "Request timed out. Please check network and try again.";
+            } else {
+              inquiryFormError.textContent =
+                "Failed to submit inquiry. Please try again. " +
+                (error.message ? `(${error.message})` : ""); // Show error message
+            }
             inquiryFormError.classList.remove("hidden");
+            // Re-enable button ONLY on failure
             submitInquiryBtn.disabled = false;
             inquirySubmitText.textContent = "Submit Inquiry";
             inquirySubmitSpinner.classList.add("hidden");
           }
         });
+        console.log("[Repair] DOMContentLoaded setup complete."); // Debug Log
       });
     </script>
   </body>

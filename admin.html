@@ -77,7 +77,8 @@
                 <th class="p-4 font-semibold text-sm">Date</th>
                 <th class="p-4 font-semibold text-sm">Customer</th>
                 <th class="p-4 font-semibold text-sm">Contact</th>
-                <th class="p-4 font-semibold text-sm">Device & Services</th>
+                <th class="p-4 font-semibold text-sm">Details</th>
+                <!-- Changed from "Device & Services" -->
                 <th class="p-4 font-semibold text-sm">Status</th>
               </tr>
             </thead>
@@ -237,18 +238,51 @@
                   ? quote.submittedAt.toDate().toLocaleString("en-IN")
                   : "N/A";
 
+                // --- START: Logic to display different form types ---
+                let detailsHtml = "";
+                if (quote.message) {
+                  // This is a contact inquiry from contact.html
+                  detailsHtml = `
+                    <p class="font-semibold text-gray-700">Contact Message:</p>
+                    <p class="text-gray-600 italic break-words max-w-xs">"${quote.message}"</p>
+                  `;
+                } else if (quote.device && (quote.services || quote.issue)) {
+                  // This is a quote request from a brand page or modal
+                  let servicesText = "";
+                  if (quote.services) {
+                    if (Array.isArray(quote.services)) {
+                      servicesText = quote.services.join(", "); // From brands/*.html
+                    } else {
+                      servicesText = quote.services; // From index.html modal
+                    }
+                  } else if (quote.issue) {
+                    servicesText = quote.issue; // From repair_phone.html modal
+                  }
+
+                  detailsHtml = `
+                    <p class="font-semibold">${quote.device || "N/A"}</p>
+                    <p class="text-gray-600 break-words max-w-xs">${
+                      servicesText || "No services listed"
+                    }</p>
+                  `;
+                } else {
+                  // Fallback for any other structure
+                  detailsHtml =
+                    '<p class="text-gray-500">No details provided.</p>';
+                }
+                // --- END: Logic to display different form types ---
+
                 row.innerHTML = `
                             <td class="p-4 text-sm">${submittedAt}</td>
                             <td class="p-4 text-sm font-semibold">${
                               quote.name
                             }</td>
                             <td class="p-4 text-sm">
-                                <p>${quote.phone}</p>
+                                <p>${quote.phone || ""}</p>
                                 <p class="text-gray-500">${quote.email}</p>
                             </td>
                             <td class="p-4 text-sm">
-                                <p class="font-semibold">${quote.device}</p>
-                                <p class="text-gray-600">${quote.services}</p>
+                                ${detailsHtml} <!-- Replaced old content -->
                             </td>
                             <td class="p-4 text-sm">
                                 <select data-id="${quoteId}" class="status-dropdown rounded-lg border-gray-300">
