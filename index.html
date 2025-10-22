@@ -732,6 +732,7 @@
       } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
       // --- Firebase Configuration ---
+      console.log("[Index] Script loaded. Checking Firebase config..."); // Debug Log
       const firebaseConfig = {
         apiKey: "AIzaSyAPwUjYPD5CzGIfT_6KqkpdLKnUNURSIs8",
         authDomain: "fixmyphone-website-889b5.firebaseapp.com",
@@ -740,16 +741,23 @@
         messagingSenderId: "619306240303",
         appId: "1:619306240303:web:f1e2445eec7bba1a09b9da",
       };
-      const appId = "fixmyphone-website-889b5";
+      const appId = "fixmyphone-website-889b5"; // Use projectId consistently
       let db;
       try {
+        console.log("[Index] Attempting Firebase initialization..."); // Debug Log
         const app = initializeApp(firebaseConfig);
         db = getFirestore(app);
+        console.log(
+          "[Index] Firebase initialized successfully. db object:",
+          db ? "Exists" : "Failed"
+        ); // Debug Log
       } catch (e) {
-        console.error("Firebase initialization failed:", e);
+        console.error("[Index] Firebase initialization failed:", e);
+        db = null; // Ensure db is null on failure
       }
 
       document.addEventListener("DOMContentLoaded", () => {
+        console.log("[Index] DOMContentLoaded event fired."); // Debug Log
         const mobileMenuBtn = document.getElementById("mobile-menu-btn");
         const mobileMenu = document.getElementById("mobile-menu");
         const dismissBannerBtn = document.getElementById("dismiss-banner");
@@ -757,8 +765,10 @@
         const backToTopBtn = document.getElementById("back-to-top");
         const quoteModal = document.getElementById("quote-modal");
         const closeModalButton = document.getElementById("close-modal");
-        const quoteButtons = document.querySelectorAll("#hero-quote-btn");
+        const quoteButtons = document.querySelectorAll("#hero-quote-btn"); // Corrected selector
         const modalQuoteForm = document.getElementById("modal-quote-form");
+        const submitBtn = document.getElementById("modal-submit-btn"); // Define here for broader scope
+        const errorP = document.getElementById("modal-form-error"); // Define here
 
         // Mobile Menu Toggle
         mobileMenuBtn.addEventListener("click", () =>
@@ -775,16 +785,21 @@
 
         // Quote Modal Logic
         const showModal = () => {
+          console.log("[Index] showModal called"); // Debug Log
           quoteModal.classList.remove("invisible", "opacity-0");
           quoteModal
             .querySelector(".modal-content-transition")
             .classList.remove("scale-95");
+          document.body.style.overflow = "hidden"; // Prevent background scroll
         };
         const hideModal = () => {
+          console.log("[Index] hideModal called"); // Debug Log
           quoteModal.classList.add("invisible", "opacity-0");
           quoteModal
             .querySelector(".modal-content-transition")
             .classList.add("scale-95");
+          document.body.style.overflow = ""; // Restore background scroll
+          errorP.classList.add("hidden"); // Hide error on close
         };
 
         quoteButtons.forEach((button) =>
@@ -792,20 +807,43 @@
         );
         closeModalButton.addEventListener("click", hideModal);
         quoteModal.addEventListener("click", (e) => {
-          if (e.target === quoteModal) hideModal();
+          if (e.target === quoteModal) hideModal(); // Close if background clicked
         });
 
         // Modal Form Submission
         modalQuoteForm.addEventListener("submit", async (e) => {
-          e.preventDefault();
-          const submitBtn = document.getElementById("modal-submit-btn");
-          const errorP = document.getElementById("modal-form-error");
+          e.preventDefault(); // Prevent default form submission which causes page reload
+          console.log("[Index] Modal form submitted."); // Debug Log
 
+          // Basic HTML5 validation check
+          if (!modalQuoteForm.checkValidity()) {
+            console.log("[Index] Form invalid (HTML5 check). Showing error."); // Debug Log
+            errorP.textContent = "Please fill out all required fields.";
+            errorP.classList.remove("hidden");
+            return; // Stop submission if basic validation fails
+          }
+
+          // More specific validation (e.g., phone number format - adapt regex if needed)
+          const phoneValue = document.getElementById("modal-phone").value;
+          if (!/^\d{10}$/.test(phoneValue)) {
+            // Example: 10-digit number
+            console.log("[Index] Form invalid (Phone regex). Showing error."); // Debug Log
+            errorP.textContent = "Please enter a valid 10-digit phone number.";
+            errorP.classList.remove("hidden");
+            return;
+          }
+
+          console.log(
+            "[Index] Form appears valid. Disabling button, showing spinner."
+          ); // Debug Log
           submitBtn.disabled = true;
           submitBtn.textContent = "Submitting...";
-          errorP.classList.add("hidden");
+          errorP.classList.add("hidden"); // Hide previous errors
 
           if (!db) {
+            console.error(
+              "[Index] Firestore db object is null. Cannot submit."
+            ); // Debug Log
             errorP.textContent =
               "Database connection failed. Please try again later.";
             errorP.classList.remove("hidden");
@@ -816,15 +854,21 @@
 
           const formData = {
             name: document.getElementById("modal-name").value,
-            phone: document.getElementById("modal-phone").value,
+            phone: phoneValue, // Use validated value
             email: "", // Modal doesn't have an email field, can be added if needed
             device: document.getElementById("modal-device").value,
             services: document.getElementById("modal-issue").value,
             status: "New",
             submittedAt: serverTimestamp(),
           };
+          console.log("[Index] Form data prepared:", formData); // Debug Log
 
           try {
+            const collectionPath = `artifacts/${appId}/public/data/quoteRequests`;
+            console.log(
+              "[Index] Attempting to add document to collection:",
+              collectionPath
+            ); // Debug Log
             const quotesCollectionRef = collection(
               db,
               "artifacts",
@@ -833,12 +877,48 @@
               "data",
               "quoteRequests"
             );
-            const docRef = await addDoc(quotesCollectionRef, formData);
+
+            // Add a timeout promise
+            const timeoutPromise = new Promise((_, reject) =>
+              setTimeout(
+                () => reject(new Error("Request timed out after 10 seconds.")),
+                10000
+              )
+            );
+
+            const addDocPromise = addDoc(quotesCollectionRef, formData);
+
+            // Race the addDoc operation against the timeout
+            const docRef = await Promise.race([addDocPromise, timeoutPromise]);
+
+            if (!docRef || !docRef.id) {
+              console.error(
+                "[Index] Firestore addDoc returned invalid response:",
+                docRef
+              ); // Debug Log
+              throw new Error("Database returned an invalid response.");
+            }
+
+            console.log(
+              "[Index] Document added successfully. Doc ID:",
+              docRef.id
+            ); // Debug Log
+            // Redirect ONLY on success
             window.location.href = `quote-confirmation.html?id=${docRef.id}`;
           } catch (error) {
-            console.error("Error submitting quote:", error);
-            errorP.textContent = "Failed to submit request. Please try again.";
+            console.error("[Index] Error or timeout submitting quote:", error); // Debug Log
+            console.log("[Index] Full error object:", error); // Log the full error object
+
+            if (error.message && error.message.includes("timed out")) {
+              errorP.textContent =
+                "Request timed out. Please check network and try again.";
+            } else {
+              errorP.textContent =
+                "Failed to submit request. Please try again. " +
+                (error.message ? `(${error.message})` : ""); // Show error message
+            }
             errorP.classList.remove("hidden");
+            // Re-enable button ONLY on failure
             submitBtn.disabled = false;
             submitBtn.textContent = "Submit Request";
           }
@@ -875,6 +955,7 @@
         document.querySelectorAll(".fade-in").forEach((section) => {
           observer.observe(section);
         });
+        console.log("[Index] DOMContentLoaded setup complete."); // Debug Log
       });
     </script>
   </body>
