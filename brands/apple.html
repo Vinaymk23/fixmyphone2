@@ -6,7 +6,7 @@
     <title>Apple iPhone Repair - fixmyPhone</title>
     <meta
       name="description"
-      content="Select your iPhone model and the repair services you need. We fix screens, batteries, and more for all recent iPhone models in Mysore."
+      content="Select your Apple iPhone model and the repair services you need. We fix screens, batteries, and more for all recent iPhone models in Mysore."
     />
 
     <!-- Google Analytics -->
@@ -185,7 +185,7 @@
         <!-- Step 1: Model Selection -->
         <section id="model-selection">
           <h1 class="text-3xl lg:text-4xl font-extrabold text-center mb-4">
-            Select Your iPhone to Begin Repair
+            Select Your Apple iPhone to Begin Repair
           </h1>
           <p class="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
             Choose your model from the list below to see available repair
@@ -202,7 +202,7 @@
             <input
               type="text"
               id="manual-model-input"
-              placeholder="Enter your phone model (e.g., iPhone X)"
+              placeholder="Enter your phone model (e.g., iPhone XR)"
               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <button
@@ -427,6 +427,10 @@
         serverTimestamp,
       } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
+      // --- START DEBUGGING BLOCK ---
+      console.log("[Apple] Script loaded. Checking for Firebase config...");
+      // --- END DEBUGGING BLOCK ---
+
       let firebaseConfig =
         typeof __firebase_config !== "undefined"
           ? JSON.parse(__firebase_config)
@@ -435,9 +439,19 @@
       let db = null;
       let isLocalTestMode = false;
 
+      // --- START DEBUGGING BLOCK ---
+      console.log(
+        "[Apple] __firebase_config:",
+        typeof __firebase_config !== "undefined"
+          ? __firebase_config.substring(0, 50) + "..."
+          : "undefined"
+      );
+      console.log("[Apple] __app_id:", appId);
+      // --- END DEBUGGING BLOCK ---
+
       if (!firebaseConfig || !appId) {
         console.warn(
-          "Firebase configuration not found. Activating local testing mode. Form submissions will be simulated and NOT saved to the database."
+          "[Apple] Firebase configuration not found via __ variables. Activating local testing mode. Form submissions will be simulated and NOT saved to the database."
         );
         isLocalTestMode = true;
         firebaseConfig = {
@@ -449,71 +463,83 @@
       }
 
       try {
+        // --- START DEBUGGING BLOCK ---
+        console.log(
+          "[Apple] Attempting Firebase initialization with config:",
+          firebaseConfig
+        );
+        // --- END DEBUGGING BLOCK ---
         const app = initializeApp(firebaseConfig);
         db = getFirestore(app);
+        // --- START DEBUGGING BLOCK ---
+        console.log(
+          "[Apple] Firebase initialized successfully. db object:",
+          db ? "Exists" : "Failed"
+        );
+        // --- END DEBUGGING BLOCK ---
       } catch (e) {
-        console.error("Firebase initialization failed:", e);
+        console.error("[Apple] Firebase initialization failed:", e);
         db = null;
       }
 
       document.addEventListener("DOMContentLoaded", () => {
-        // --- APPLE SPECIFIC DATA (UPDATED) ---
+        // --- APPLE SPECIFIC DATA ---
         const repairData = {
           "iPhone 15 Pro Max": [
             "Screen Replacement",
             "Battery Replacement",
             "Back Glass Repair",
             "Camera Repair",
-            "Charging Port Repair",
           ],
           "iPhone 15 Pro": [
             "Screen Replacement",
             "Battery Replacement",
             "Back Glass Repair",
             "Camera Repair",
-            "Charging Port Repair",
           ],
           "iPhone 15 Plus": [
             "Screen Replacement",
             "Battery Replacement",
             "Back Glass Repair",
-            "Camera Repair",
           ],
           "iPhone 15": [
             "Screen Replacement",
             "Battery Replacement",
             "Back Glass Repair",
-            "Camera Repair",
           ],
           "iPhone 14 Pro Max": [
             "Screen Replacement",
             "Battery Replacement",
             "Back Glass Repair",
-            "Charging Port Repair",
           ],
           "iPhone 14 Pro": [
             "Screen Replacement",
             "Battery Replacement",
             "Back Glass Repair",
-            "Charging Port Repair",
+          ],
+          "iPhone 14 Plus": [
+            "Screen Replacement",
+            "Battery Replacement",
+            "Back Glass Repair",
           ],
           "iPhone 14": [
             "Screen Replacement",
             "Battery Replacement",
-            "Camera Repair",
+            "Back Glass Repair",
           ],
-          "iPhone 13": [
+          "iPhone 13 Pro Max": ["Screen Replacement", "Battery Replacement"],
+          "iPhone 13 Pro": ["Screen Replacement", "Battery Replacement"],
+          "iPhone 13": ["Screen Replacement", "Battery Replacement"],
+          "iPhone 13 mini": ["Screen Replacement", "Battery Replacement"],
+          "iPhone 12 Pro Max": ["Screen Replacement", "Battery Replacement"],
+          "iPhone 12 Pro": ["Screen Replacement", "Battery Replacement"],
+          "iPhone 12": ["Screen Replacement", "Battery Replacement"],
+          "iPhone 11": [
             "Screen Replacement",
             "Battery Replacement",
             "Charging Port Repair",
           ],
-          "iPhone 12": ["Screen Replacement", "Battery Replacement"],
-          "iPhone 11": ["Screen Replacement", "Battery Replacement"],
-          "iPhone SE (3rd Gen)": [
-            "Screen Replacement",
-            "Battery Replacement",
-            "Home Button Repair",
-          ],
+          "iPhone SE (3rd Gen)": ["Screen Replacement", "Battery Replacement"],
         };
         const serviceDescriptions = {
           "Screen Replacement":
@@ -526,8 +552,6 @@
             "Fixes issues with blurry photos, focus problems, or black screens.",
           "Charging Port Repair":
             "Solves problems with charging or connecting accessories.",
-          "Home Button Repair":
-            "Repairs non-functional or sticky home buttons.",
           "Water Damage Diagnostic":
             "Comprehensive check for liquid-damaged devices.",
         };
@@ -785,9 +809,15 @@
 
         quoteForm.addEventListener("submit", async (e) => {
           e.preventDefault();
+          // --- START DEBUGGING BLOCK ---
+          console.log("[Apple] Quote form submitted.");
+          // --- END DEBUGGING BLOCK ---
           if (!quoteForm.checkValidity()) {
             formError.textContent = "Please fill out all required fields.";
             formError.classList.remove("hidden");
+            // --- START DEBUGGING BLOCK ---
+            console.log("[Apple] Form invalid (HTML5 validation).");
+            // --- END DEBUGGING BLOCK ---
             return;
           }
           const phoneValue = document.getElementById("phone").value;
@@ -796,11 +826,17 @@
             formError.textContent =
               "Please enter a valid 10-digit Indian phone number.";
             formError.classList.remove("hidden");
+            // --- START DEBUGGING BLOCK ---
+            console.log("[Apple] Form invalid (Phone regex).");
+            // --- END DEBUGGING BLOCK ---
             return;
           }
           if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailValue)) {
             formError.textContent = "Please enter a valid email address.";
             formError.classList.remove("hidden");
+            // --- START DEBUGGING BLOCK ---
+            console.log("[Apple] Form invalid (Email regex).");
+            // --- END DEBUGGING BLOCK ---
             return;
           }
           formError.classList.add("hidden");
@@ -808,8 +844,14 @@
           submitText.textContent = "Submitting...";
           submitSpinner.classList.remove("hidden");
 
+          // --- START DEBUGGING BLOCK ---
+          console.log("[Apple] isLocalTestMode:", isLocalTestMode);
+          // --- END DEBUGGING BLOCK ---
+
           if (isLocalTestMode) {
-            console.log("LOCAL TEST MODE: Simulating a successful submission.");
+            console.log(
+              "[Apple] LOCAL TEST MODE: Simulating a successful submission."
+            );
             setTimeout(() => {
               const fakeDocId = `test_${new Date().getTime()}`;
               window.location.href = `../quote-confirmation.html?id=${fakeDocId}`;
@@ -817,6 +859,12 @@
             return;
           }
 
+          // --- START DEBUGGING BLOCK ---
+          console.log(
+            "[Apple] Checking db object before submission:",
+            db ? "Exists" : "NULL"
+          );
+          // --- END DEBUGGING BLOCK ---
           if (!db) {
             formError.textContent =
               "Database is not configured correctly. Cannot submit.";
@@ -824,6 +872,9 @@
             submitButton.disabled = false;
             submitText.textContent = "Submit Request";
             submitSpinner.classList.add("hidden");
+            // --- START DEBUGGING BLOCK ---
+            console.error("[Apple] Submission aborted: db object is null.");
+            // --- END DEBUGGING BLOCK ---
             return;
           }
 
@@ -836,6 +887,9 @@
             submittedAt: serverTimestamp(),
             status: "New",
           };
+          // --- START DEBUGGING BLOCK ---
+          console.log("[Apple] Form data prepared:", formData);
+          // --- END DEBUGGING BLOCK ---
           const timeoutPromise = new Promise((_, reject) =>
             setTimeout(
               () => reject(new Error("Request timed out after 10 seconds.")),
@@ -844,6 +898,13 @@
           );
 
           try {
+            // --- START DEBUGGING BLOCK ---
+            const collectionPath = `artifacts/${appId}/public/data/quoteRequests`;
+            console.log(
+              "[Apple] Attempting to add document to collection:",
+              collectionPath
+            );
+            // --- END DEBUGGING BLOCK ---
             const collectionRef = collection(
               db,
               "artifacts",
@@ -856,17 +917,33 @@
             const docRef = await Promise.race([addDocPromise, timeoutPromise]);
 
             if (!docRef || !docRef.id) {
+              // --- START DEBUGGING BLOCK ---
+              console.error(
+                "[Apple] Firestore addDoc returned invalid response:",
+                docRef
+              );
+              // --- END DEBUGGING BLOCK ---
               throw new Error("Database returned an invalid response.");
             }
+            // --- START DEBUGGING BLOCK ---
+            console.log(
+              "[Apple] Document added successfully. Doc ID:",
+              docRef.id
+            );
+            // --- END DEBUGGING BLOCK ---
             window.location.href = `../quote-confirmation.html?id=${docRef.id}`;
           } catch (error) {
-            console.error("Error or timeout adding document: ", error);
+            console.error("[Apple] Error or timeout adding document: ", error); // Keep original error log
+            // --- START DEBUGGING BLOCK ---
+            console.log("[Apple] Full error object:", error); // Log the full error
+            // --- END DEBUGGING BLOCK ---
             if (error.message && error.message.includes("timed out")) {
               formError.textContent =
                 "Request timed out. Please check your network and try again.";
             } else {
               formError.textContent =
-                "Could not submit request. An unexpected error occurred.";
+                "Could not submit request. An unexpected error occurred. " +
+                (error.message ? `(${error.message})` : ""); // Add error message
             }
             formError.classList.remove("hidden");
             submitButton.disabled = false;
@@ -875,15 +952,17 @@
           }
         });
 
-        renderModelGrid();
-
+        // Add event listeners for modal interactions
         summaryList.addEventListener("click", handleSummaryRemove);
         getQuoteBtn.addEventListener("click", handleGetQuote);
         closeModalButton.addEventListener("click", hideModal);
         quoteModal.addEventListener("click", (e) => {
           if (e.target === quoteModal) hideModal();
         });
-      });
+
+        // Initialize the model grid display on page load
+        renderModelGrid(); // <<< THIS IS THE FIX
+      }); // End of DOMContentLoaded listener
     </script>
   </body>
 </html>
