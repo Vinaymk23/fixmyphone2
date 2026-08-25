@@ -3,6 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+    <link rel="canonical" href="https://gofixmyphone.com/brands/realme.html" />
     <title>Realme Phone Repair - fixmyPhone</title>
     <meta
       name="description"
@@ -100,6 +102,14 @@
       .modal-content-transition {
         transition: transform 0.3s ease-in-out;
       }
+      .mobile-menu-animation {
+        transition: max-height 0.3s ease-in-out;
+        max-height: 0;
+        overflow: hidden;
+      }
+      .mobile-menu-animation.active {
+        max-height: 500px;
+      }
     </style>
   </head>
 
@@ -110,12 +120,37 @@
         <a href="../index.html" class="flex items-center space-x-2">
           <span class="text-2xl font-bold text-blue-600">fixmyPhone</span>
         </a>
+        <div class="hidden md:flex items-center space-x-6">
+          <a href="../index.html#services" class="text-gray-600 hover:text-blue-600">Services</a>
+          <a href="../repair_phone.html" class="text-gray-600 hover:text-blue-600">Book a Repair</a>
+          <a href="../blog.html" class="text-gray-600 hover:text-blue-600">Blog</a>
+          <a href="../contact.html" class="text-gray-600 hover:text-blue-600">Contact</a>
+        </div>
         <a
           href="../contact.html"
-          class="bg-blue-600 text-white font-semibold py-2 px-4 rounded-full shadow-md hover:bg-blue-700 transition-colors duration-200"
+          class="hidden md:inline-block bg-blue-600 text-white font-semibold py-2 px-4 rounded-full shadow-md hover:bg-blue-700 transition-colors duration-200"
           >Contact Us</a
         >
+        <!-- Mobile Menu Button -->
+        <button
+          id="mobile-menu-btn"
+          class="md:hidden text-gray-600 hover:text-blue-600"
+          aria-label="Open navigation menu"
+        >
+          <i class="fas fa-bars text-2xl"></i>
+        </button>
       </nav>
+      <!-- Mobile Menu -->
+      <div
+        id="mobile-menu"
+        class="md:hidden bg-white shadow-lg py-4 mobile-menu-animation"
+      >
+        <a href="../index.html#services" class="block px-6 py-2 text-gray-600 hover:bg-gray-100">Services</a>
+        <a href="../repair_phone.html" class="block px-6 py-2 text-gray-600 hover:bg-gray-100">Book a Repair</a>
+        <a href="../blog.html" class="block px-6 py-2 text-gray-600 hover:bg-gray-100">Blog</a>
+        <a href="../contact.html" class="block px-6 py-2 text-gray-600 hover:bg-gray-100">Contact</a>
+        <a href="../contact.html" class="block px-6 py-2 text-blue-600 font-semibold hover:bg-gray-100">Contact Us</a>
+      </div>
     </header>
 
     <main class="pt-12 pb-20">
@@ -293,7 +328,7 @@
 
     <footer class="bg-gray-800 text-white py-12">
       <div class="container mx-auto px-6 text-center">
-        <p>&copy; 2024 fixmyPhone. All rights reserved.</p>
+        <p>&copy; 2025 fixmyPhone. All rights reserved.</p>
         <div class="mt-4">
           <a
             href="../privacy.html"
@@ -419,54 +454,21 @@
     </div>
 
     <script type="module">
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
       import {
-        getFirestore,
-        collection,
-        addDoc,
-        serverTimestamp,
-      } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-      // --- Firebase Configuration ---
-      console.log("[Realme] Script loaded. Initializing Firebase..."); // Debug Log
-      const firebaseConfig = {
-        // Embed config directly
-        apiKey: "AIzaSyAPwUjYPD5CzGIfT_6KqkpdLKnUNURSIs8",
-        authDomain: "fixmyphone-website-889b5.firebaseapp.com",
-        projectId: "fixmyphone-website-889b5",
-        storageBucket: "fixmyphone-website-889b5.appspot.com",
-        messagingSenderId: "619306240303",
-        appId: "1:619306240303:web:f1e2445eec7bba1a09b9da",
-      };
-      const appId = "fixmyphone-website-889b5"; // Use projectId consistently
-      let db = null;
-      let isLocalTestMode = false; // Keep this in case needed for local tests outside Canvas
-
-      try {
-        console.log(
-          "[Realme] Attempting Firebase initialization with embedded config..."
-        ); // Debug Log
-        const app = initializeApp(firebaseConfig);
-        db = getFirestore(app);
-        console.log(
-          "[Realme] Firebase initialized successfully. db object:",
-          db ? "Exists" : "Failed"
-        ); // Debug Log
-      } catch (e) {
-        console.error("[Realme] Firebase initialization failed:", e);
-        db = null; // Ensure db is null on failure
-        isLocalTestMode = true; // Fallback to local test mode if init fails
-        console.warn(
-          "[Realme] Firebase init failed, activating local test mode."
-        );
-      }
+        db,
+        validatePhone,
+        validateEmail,
+        submitQuoteRequest,
+        showFormError,
+        hideFormError,
+        resetSubmitButton,
+        initMobileMenu,
+      } from "../shared.js";
 
       document.addEventListener("DOMContentLoaded", () => {
-        // --- START DEBUGGING BLOCK ---
-        console.log("[Realme] DOMContentLoaded event fired.");
-        // --- END DEBUGGING BLOCK ---
+        initMobileMenu();
 
-        // --- REALME SPECIFIC DATA (UPDATED) ---
+        // --- REALME SPECIFIC DATA ---
         const repairData = {
           "Realme 12 Pro+": [
             "Screen Replacement",
@@ -507,32 +509,22 @@
           "Back Glass Repair",
           "Water Damage Diagnostic",
         ];
-        // --- END OF REALME SPECIFIC DATA ---
+                // --- END OF REALME SPECIFIC DATA ---
 
         let selectedModel = null;
         let selectedServices = [];
 
         const modelGrid = document.getElementById("model-grid");
-        const repairAndSummarySection = document.getElementById(
-          "repair-and-summary-section"
-        );
-        const selectedModelName = document.getElementById(
-          "selected-model-name"
-        );
+        const repairAndSummarySection = document.getElementById("repair-and-summary-section");
+        const selectedModelName = document.getElementById("selected-model-name");
         const serviceList = document.getElementById("service-list");
         const summaryContent = document.getElementById("summary-content");
-        const summaryDeviceName = document.getElementById(
-          "summary-device-name"
-        );
+        const summaryDeviceName = document.getElementById("summary-device-name");
         const summaryList = document.getElementById("summary-list");
-        const summaryPlaceholder = document.getElementById(
-          "summary-placeholder"
-        );
+        const summaryPlaceholder = document.getElementById("summary-placeholder");
         const getQuoteBtn = document.getElementById("get-quote-btn");
         const quoteModal = document.getElementById("quote-modal");
-        const quoteModalContent = document.getElementById(
-          "quote-modal-content"
-        );
+        const quoteModalContent = document.getElementById("quote-modal-content");
         const closeModalButton = document.getElementById("close-modal");
         const quoteForm = document.getElementById("quote-form");
         const deviceInput = document.getElementById("device");
@@ -543,27 +535,13 @@
         const formError = document.getElementById("form-error");
         const manualModelForm = document.getElementById("manual-model-form");
         const manualModelInput = document.getElementById("manual-model-input");
-        const manualModelConfirm = document.getElementById(
-          "manual-model-confirm"
-        );
-        const manualServiceForm = document.getElementById(
-          "manual-service-form"
-        );
-        const manualServiceInput = document.getElementById(
-          "manual-service-input"
-        );
+        const manualModelConfirm = document.getElementById("manual-model-confirm");
+        const manualServiceForm = document.getElementById("manual-service-form");
+        const manualServiceInput = document.getElementById("manual-service-input");
         const manualServiceAdd = document.getElementById("manual-service-add");
 
         const createProgressBar = (currentStep) => {
-          // --- START DEBUGGING BLOCK ---
-          // console.log(`[Realme] createProgressBar called with currentStep: ${currentStep}`);
-          // --- END DEBUGGING BLOCK ---
-          const steps = [
-            "Select Brand",
-            "Choose Repairs",
-            "Your Details",
-            "Confirmation",
-          ];
+          const steps = ["Select Brand", "Choose Repairs", "Your Details", "Confirmation"];
           let items = "";
           steps.forEach((step, index) => {
             const stepNum = index + 1;
@@ -571,26 +549,15 @@
             if (stepNum < currentStep) statusClass = "completed";
             else if (stepNum === currentStep) statusClass = "active";
             else statusClass = "upcoming";
-            items += `<li class="${statusClass}"><div class="flex items-center"><div class="step-node">${stepNum}</div>${
-              index < steps.length - 1
-                ? '<div class="step-connector"></div>'
-                : ""
-            }</div><p class="text-sm mt-2 font-semibold">${step}</p></li>`;
+            items += `<li class="${statusClass}"><div class="flex items-center"><div class="step-node">${stepNum}</div>${index < steps.length - 1 ? '<div class="step-connector"></div>' : ""}</div><p class="text-sm mt-2 font-semibold">${step}</p></li>`;
           });
           const progressBarHTML = `<div class="mb-8 progress-bar"><ol>${items}</ol></div>`;
           const existingBar = quoteModalContent.querySelector(".progress-bar");
           if (existingBar) existingBar.outerHTML = progressBarHTML;
-          else
-            quoteModalContent.insertAdjacentHTML("afterbegin", progressBarHTML);
+          else quoteModalContent.insertAdjacentHTML("afterbegin", progressBarHTML);
         };
-        const showModal = (device, services) => {
-          // --- START DEBUGGING BLOCK ---
-          console.log(
-            `[Realme] showModal called. Device: ${device}, Services: ${services.join(
-              ", "
-            )}`
-          );
-          // --- END DEBUGGING BLOCK ---
+
+        const showQuoteModal = (device, services) => {
           deviceInput.value = device;
           issueInput.value = services.join(", ");
           createProgressBar(3);
@@ -598,77 +565,48 @@
           quoteModalContent.classList.remove("scale-95");
           document.body.style.overflow = "hidden";
         };
-        const hideModal = () => {
-          // --- START DEBUGGING BLOCK ---
-          console.log("[Realme] hideModal called.");
-          // --- END DEBUGGING BLOCK ---
+
+        const hideQuoteModal = () => {
           quoteModal.classList.add("invisible", "opacity-0");
           quoteModalContent.classList.add("scale-95");
           document.body.style.overflow = "";
-          formError.classList.add("hidden");
+          hideFormError(formError);
         };
 
         const renderModelGrid = () => {
-          // --- START DEBUGGING BLOCK ---
-          console.log("[Realme] renderModelGrid called.");
-          // --- END DEBUGGING BLOCK ---
           modelGrid.innerHTML = "";
           for (const model in repairData) {
             const card = document.createElement("div");
-            card.className =
-              "model-card cursor-pointer flex flex-col items-center p-4 bg-white rounded-xl shadow-md border-2 border-transparent";
+            card.className = "model-card cursor-pointer flex flex-col items-center p-4 bg-white rounded-xl shadow-md border-2 border-transparent";
             card.dataset.model = model;
-            card.innerHTML = `<img src="https://placehold.co/100x100/E0E7FF/1E40AF?text=${model.replace(
-              / /g,
-              "+"
-            )}" alt="${model}" class="w-20 h-20 object-contain mb-2 rounded-md"/><span class="font-semibold text-sm text-center">${model}</span>`;
+            card.innerHTML = `<img src="https://placehold.co/100x100/E0E7FF/1E40AF?text=${model.replace(/ /g, "+")}" alt="${model}" class="w-20 h-20 object-contain mb-2 rounded-md"/><span class="font-semibold text-sm text-center">${model}</span>`;
             modelGrid.appendChild(card);
           }
           const manualCard = document.createElement("div");
           manualCard.id = "manual-model-card";
-          manualCard.className =
-            "model-card cursor-pointer flex flex-col items-center justify-center p-4 bg-gray-100 rounded-xl shadow-sm border-2 border-dashed border-gray-400 hover:border-blue-500 hover:bg-gray-200";
+          manualCard.className = "model-card cursor-pointer flex flex-col items-center justify-center p-4 bg-gray-100 rounded-xl shadow-sm border-2 border-dashed border-gray-400 hover:border-blue-500 hover:bg-gray-200";
           manualCard.innerHTML = `<i class="fas fa-question-circle text-4xl text-gray-500 mb-2"></i><span class="font-semibold text-sm text-center text-gray-700">Model Not Listed?</span>`;
           modelGrid.appendChild(manualCard);
         };
 
         const renderServices = () => {
-          // --- START DEBUGGING BLOCK ---
-          console.log(
-            `[Realme] renderServices called for model: ${selectedModel}`
-          );
-          // --- END DEBUGGING BLOCK ---
           serviceList.innerHTML = "";
-          const availableServices =
-            repairData[selectedModel] || genericServices;
+          const availableServices = repairData[selectedModel] || genericServices;
           availableServices.forEach((service) => {
             const isSelected = selectedServices.includes(service);
             const card = document.createElement("div");
-            card.className =
-              "service-card flex items-center justify-between p-4 bg-white rounded-lg shadow-sm border";
-            card.innerHTML = `<div><h4 class="font-bold">${service}</h4><p class="text-sm text-gray-600">${
-              serviceDescriptions[service] || "Custom repair request."
-            }</p></div><button data-service="${service}" class="add-remove-btn text-sm font-semibold py-2 px-4 rounded-full transition-colors ${
-              isSelected
-                ? "bg-red-100 text-red-700 hover:bg-red-200"
-                : "bg-blue-100 text-blue-700 hover:bg-blue-200"
-            }">${isSelected ? "Remove" : "Add"}</button>`;
+            card.className = "service-card flex items-center justify-between p-4 bg-white rounded-lg shadow-sm border";
+            card.innerHTML = `<div><h4 class="font-bold">${service}</h4><p class="text-sm text-gray-600">${serviceDescriptions[service] || "Custom repair request."}</p></div><button data-service="${service}" class="add-remove-btn text-sm font-semibold py-2 px-4 rounded-full transition-colors ${isSelected ? "bg-red-100 text-red-700 hover:bg-red-200" : "bg-blue-100 text-blue-700 hover:bg-blue-200"}">${isSelected ? "Remove" : "Add"}</button>`;
             serviceList.appendChild(card);
           });
           const manualServiceCard = document.createElement("div");
           manualServiceCard.id = "manual-service-card";
-          manualServiceCard.className =
-            "service-card flex flex-col items-center justify-center p-4 bg-gray-100 rounded-lg shadow-sm border-2 border-dashed border-gray-400 cursor-pointer hover:border-blue-500 hover:bg-gray-200";
+          manualServiceCard.className = "service-card flex flex-col items-center justify-center p-4 bg-gray-100 rounded-lg shadow-sm border-2 border-dashed border-gray-400 cursor-pointer hover:border-blue-500 hover:bg-gray-200";
           manualServiceCard.innerHTML = `<i class="fas fa-tools text-3xl text-gray-500 mb-2"></i><h4 class="font-bold text-gray-700">Other Repair Issue?</h4><p class="text-sm text-gray-600 text-center mt-1">Click to describe your problem.</p>`;
           serviceList.appendChild(manualServiceCard);
         };
 
         const renderSummary = () => {
-          // --- START DEBUGGING BLOCK ---
-          console.log(
-            `[Realme] renderSummary called. Selected services: ${selectedServices.length}`
-          );
-          // --- END DEBUGGING BLOCK ---
           if (selectedServices.length === 0) {
             summaryContent.classList.add("hidden");
             summaryPlaceholder.classList.remove("hidden");
@@ -691,44 +629,25 @@
         };
 
         const handleModelSelect = (modelName) => {
-          // --- START DEBUGGING BLOCK ---
-          console.log(
-            `[Realme] handleModelSelect called with model: ${modelName}`
-          );
-          // --- END DEBUGGING BLOCK ---
           selectedModel = modelName;
           selectedServices = [];
-          document
-            .querySelectorAll(".model-card")
-            .forEach((c) => c.classList.remove("selected"));
-          const card = document.querySelector(
-            `.model-card[data-model="${modelName}"]`
-          );
+          document.querySelectorAll(".model-card").forEach((c) => c.classList.remove("selected"));
+          const card = document.querySelector(`.model-card[data-model="${modelName}"]`);
           if (card) card.classList.add("selected");
-
           selectedModelName.textContent = selectedModel;
           repairAndSummarySection.classList.remove("hidden");
           renderServices();
           renderSummary();
-          repairAndSummarySection.scrollIntoView({
-            behavior: "smooth",
-            block: "start",
-          });
+          repairAndSummarySection.scrollIntoView({ behavior: "smooth", block: "start" });
         };
 
         modelGrid.addEventListener("click", (e) => {
           const card = e.target.closest(".model-card");
           if (!card) return;
           if (card.id === "manual-model-card") {
-            // --- START DEBUGGING BLOCK ---
-            console.log("[Realme] 'Model Not Listed?' card clicked.");
-            // --- END DEBUGGING BLOCK ---
             manualModelForm.classList.remove("hidden");
             manualModelInput.focus();
-            manualModelForm.scrollIntoView({
-              behavior: "smooth",
-              block: "center",
-            });
+            manualModelForm.scrollIntoView({ behavior: "smooth", block: "center" });
           } else {
             handleModelSelect(card.dataset.model);
           }
@@ -736,9 +655,6 @@
 
         manualModelConfirm.addEventListener("click", () => {
           const modelName = manualModelInput.value.trim();
-          // --- START DEBUGGING BLOCK ---
-          console.log(`[Realme] Manual model confirmed: ${modelName}`);
-          // --- END DEBUGGING BLOCK ---
           if (modelName) {
             handleModelSelect(modelName);
             manualModelForm.classList.add("hidden");
@@ -748,13 +664,7 @@
 
         manualServiceAdd.addEventListener("click", () => {
           const serviceDescription = manualServiceInput.value.trim();
-          // --- START DEBUGGING BLOCK ---
-          console.log(`[Realme] Manual service added: ${serviceDescription}`);
-          // --- END DEBUGGING BLOCK ---
-          if (
-            serviceDescription &&
-            !selectedServices.includes(serviceDescription)
-          ) {
+          if (serviceDescription && !selectedServices.includes(serviceDescription)) {
             selectedServices.push(serviceDescription);
             renderSummary();
             manualServiceInput.value = "";
@@ -765,14 +675,8 @@
         serviceList.addEventListener("click", (e) => {
           const addRemoveButton = e.target.closest(".add-remove-btn");
           const manualCard = e.target.closest("#manual-service-card");
-
           if (addRemoveButton) {
             const service = addRemoveButton.dataset.service;
-            // --- START DEBUGGING BLOCK ---
-            console.log(
-              `[Realme] Add/Remove button clicked for service: ${service}`
-            );
-            // --- END DEBUGGING BLOCK ---
             if (selectedServices.includes(service)) {
               selectedServices = selectedServices.filter((s) => s !== service);
             } else {
@@ -781,190 +685,76 @@
             renderServices();
             renderSummary();
           } else if (manualCard) {
-            // --- START DEBUGGING BLOCK ---
-            console.log("[Realme] 'Other Repair Issue?' card clicked.");
-            // --- END DEBUGGING BLOCK ---
             manualServiceForm.classList.remove("hidden");
             manualServiceInput.focus();
           }
         });
 
-        const handleSummaryRemove = (e) => {
+        summaryList.addEventListener("click", (e) => {
           const button = e.target.closest("[data-service-remove]");
           if (!button) return;
-          const service = button.dataset.serviceRemove;
-          // --- START DEBUGGING BLOCK ---
-          console.log(`[Realme] Remove from summary clicked for: ${service}`);
-          // --- END DEBUGGING BLOCK ---
-          selectedServices = selectedServices.filter((s) => s !== service);
+          selectedServices = selectedServices.filter((s) => s !== button.dataset.serviceRemove);
           renderServices();
           renderSummary();
-        };
-        const handleGetQuote = () => {
-          // --- START DEBUGGING BLOCK ---
-          console.log("[Realme] Get Quote button clicked.");
-          // --- END DEBUGGING BLOCK ---
-          showModal(selectedModel, selectedServices);
-        };
+        });
+
+        getQuoteBtn.addEventListener("click", () => showQuoteModal(selectedModel, selectedServices));
+        closeModalButton.addEventListener("click", hideQuoteModal);
+        quoteModal.addEventListener("click", (e) => { if (e.target === quoteModal) hideQuoteModal(); });
 
         quoteForm.addEventListener("submit", async (e) => {
           e.preventDefault();
-          // --- START DEBUGGING BLOCK ---
-          console.log("[Realme] Quote form submitted.");
-          // --- END DEBUGGING BLOCK ---
+          hideFormError(formError);
+
           if (!quoteForm.checkValidity()) {
-            // --- START DEBUGGING BLOCK ---
-            console.log("[Realme] Form invalid (HTML5 check). Showing error."); // Debug Log
-            // --- END DEBUGGING BLOCK ---
-            formError.textContent = "Please fill out all required fields.";
-            formError.classList.remove("hidden");
+            showFormError(formError, "Please fill out all required fields.");
             return;
           }
           const phoneValue = document.getElementById("phone").value;
           const emailValue = document.getElementById("email").value;
-          if (!/^\d{10}$/.test(phoneValue)) {
-            // --- START DEBUGGING BLOCK ---
-            console.log("[Realme] Form invalid (Phone regex). Showing error."); // Debug Log
-            // --- END DEBUGGING BLOCK ---
-            formError.textContent =
-              "Please enter a valid 10-digit Indian phone number.";
-            formError.classList.remove("hidden");
+          if (!validatePhone(phoneValue)) {
+            showFormError(formError, "Please enter a valid 10-digit Indian phone number.");
             return;
           }
-          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailValue)) {
-            // --- START DEBUGGING BLOCK ---
-            console.log("[Realme] Form invalid (Email regex). Showing error."); // Debug Log
-            // --- END DEBUGGING BLOCK ---
-            formError.textContent = "Please enter a valid email address.";
-            formError.classList.remove("hidden");
+          if (!validateEmail(emailValue)) {
+            showFormError(formError, "Please enter a valid email address.");
             return;
           }
-          // --- START DEBUGGING BLOCK ---
-          console.log(
-            "[Realme] Form appears valid. Disabling button, showing spinner."
-          );
-          // --- END DEBUGGING BLOCK ---
-          formError.classList.add("hidden");
+
           submitButton.disabled = true;
           submitText.textContent = "Submitting...";
           submitSpinner.classList.remove("hidden");
 
-          if (isLocalTestMode) {
-            console.log(
-              "[Realme] LOCAL TEST MODE: Simulating a successful submission."
-            );
-            setTimeout(() => {
-              const fakeDocId = `test_${new Date().getTime()}`;
-              window.location.href = `../quote-confirmation.html?id=${fakeDocId}`;
-            }, 1500);
-            return;
-          }
-
-          // --- START DEBUGGING BLOCK ---
-          console.log(
-            "[Realme] Checking db object before Firestore operation:",
-            db ? "Exists" : "NULL"
-          );
-          // --- END DEBUGGING BLOCK ---
-          if (!db) {
-            formError.textContent =
-              "Database is not configured correctly. Cannot submit.";
-            formError.classList.remove("hidden");
-            submitButton.disabled = false;
-            submitText.textContent = "Submit Request";
-            submitSpinner.classList.add("hidden");
-            // --- START DEBUGGING BLOCK ---
-            console.error(
-              "[Realme] CRITICAL: db object is null. Submission aborted."
-            );
-            // --- END DEBUGGING BLOCK ---
-            return;
-          }
-
-          const formData = {
-            name: document.getElementById("name").value,
-            phone: phoneValue,
-            email: emailValue,
-            device: deviceInput.value,
-            services: issueInput.value,
-            submittedAt: serverTimestamp(),
-            status: "New",
-          };
-          // --- START DEBUGGING BLOCK ---
-          console.log("[Realme] Form data prepared:", formData);
-          // --- END DEBUGGING BLOCK ---
-          const timeoutPromise = new Promise((_, reject) =>
-            setTimeout(
-              () => reject(new Error("Request timed out after 10 seconds.")),
-              10000
-            )
-          );
-
-          try {
-            const collectionPath = `artifacts/${appId}/public/data/quoteRequests`;
-            console.log(
-              "[Realme] Attempting to add document to collection:",
-              collectionPath
-            ); // Debug Log
-            const collectionRef = collection(
-              db,
-              "artifacts",
-              appId,
-              "public",
-              "data",
-              "quoteRequests"
-            );
-            const addDocPromise = addDoc(collectionRef, formData);
-            const docRef = await Promise.race([addDocPromise, timeoutPromise]);
-
-            if (!docRef || !docRef.id) {
-              // --- START DEBUGGING BLOCK ---
-              console.error(
-                "[Realme] Firestore addDoc returned invalid response:",
-                docRef
-              ); // Debug Log
-              // --- END DEBUGGING BLOCK ---
-              throw new Error("Database returned an invalid response.");
+          await submitQuoteRequest(
+            {
+              name: document.getElementById("name").value,
+              phone: phoneValue,
+              email: emailValue,
+              device: deviceInput.value,
+              services: issueInput.value,
+            },
+            {
+              redirectUrl: "../quote-confirmation.html",
+              errorElement: formError,
+              submitButton,
+              submitTextEl: submitText,
+              submitSpinner,
             }
-            // --- START DEBUGGING BLOCK ---
-            console.log(
-              "[Realme] Document added successfully. Doc ID:",
-              docRef.id
-            );
-            // --- END DEBUGGING BLOCK ---
-            window.location.href = `../quote-confirmation.html?id=${docRef.id}`;
-          } catch (error) {
-            // --- START DEBUGGING BLOCK ---
-            console.error("[Realme] Error or timeout adding document: ", error); // Debug Log
-            console.log("[Realme] Full error object:", error); // Log the full error object
-            // --- END DEBUGGING BLOCK ---
-            if (error.message && error.message.includes("timed out")) {
-              formError.textContent =
-                "Request timed out. Please check your network and try again.";
-            } else {
-              formError.textContent =
-                "Could not submit request. An unexpected error occurred." +
-                (error.message ? `(${error.message})` : "");
-            }
-            formError.classList.remove("hidden");
-            submitButton.disabled = false;
-            submitText.textContent = "Submit Request";
-            submitSpinner.classList.add("hidden");
-          }
+          );
         });
 
         renderModelGrid();
-
-        summaryList.addEventListener("click", handleSummaryRemove);
-        getQuoteBtn.addEventListener("click", handleGetQuote);
-        closeModalButton.addEventListener("click", hideModal);
-        quoteModal.addEventListener("click", (e) => {
-          if (e.target === quoteModal) hideModal();
-        });
-        // --- START DEBUGGING BLOCK ---
-        console.log("[Realme] Initial setup complete.");
-        // --- END DEBUGGING BLOCK ---
       });
     </script>
+    <!-- WhatsApp Floating Button -->
+    <a
+      href="https://wa.me/918310061934?text=Hi%2C%20I%20need%20help%20with%20a%20phone%20repair"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="fixed bottom-6 right-6 z-50 bg-green-500 hover:bg-green-600 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-110"
+      aria-label="Chat with us on WhatsApp"
+    >
+      <i class="fab fa-whatsapp text-3xl"></i>
+    </a>
   </body>
 </html>

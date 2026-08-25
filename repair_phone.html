@@ -3,6 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="canonical" href="https://gofixmyphone.com/repair_phone.html" />
     <title>Repair Mobile Phone - fixmyPhone</title>
     <meta
       name="description"
@@ -54,6 +56,14 @@
       .modal-content-transition {
         transition: transform 0.3s ease-in-out;
       }
+      .mobile-menu-animation {
+        transition: max-height 0.3s ease-in-out;
+        max-height: 0;
+        overflow: hidden;
+      }
+      .mobile-menu-animation.active {
+        max-height: 500px;
+      }
     </style>
   </head>
 
@@ -64,12 +74,43 @@
         <a href="index.html" class="flex items-center space-x-2">
           <span class="text-2xl font-bold text-blue-600">fixmyPhone</span>
         </a>
+        <div class="hidden md:flex items-center space-x-6">
+          <a
+            href="index.html#services"
+            class="text-gray-600 hover:text-blue-600"
+            >Services</a
+          >
+          <a href="blog.html" class="text-gray-600 hover:text-blue-600"
+            >Blog</a
+          >
+          <a href="contact.html" class="text-gray-600 hover:text-blue-600"
+            >Contact</a
+          >
+        </div>
         <a
           href="contact.html"
-          class="bg-blue-600 text-white font-semibold py-2 px-4 rounded-full shadow-md hover:bg-blue-700 transition-colors duration-200"
+          class="hidden md:inline-block bg-blue-600 text-white font-semibold py-2 px-4 rounded-full shadow-md hover:bg-blue-700 transition-colors duration-200"
           >Contact Us</a
         >
+        <!-- Mobile Menu Button -->
+        <button
+          id="mobile-menu-btn"
+          class="md:hidden text-gray-600 hover:text-blue-600"
+          aria-label="Open navigation menu"
+        >
+          <i class="fas fa-bars text-2xl"></i>
+        </button>
       </nav>
+      <!-- Mobile Menu -->
+      <div
+        id="mobile-menu"
+        class="md:hidden bg-white shadow-lg py-4 mobile-menu-animation"
+      >
+        <a href="index.html#services" class="block px-6 py-2 text-gray-600 hover:bg-gray-100">Services</a>
+        <a href="blog.html" class="block px-6 py-2 text-gray-600 hover:bg-gray-100">Blog</a>
+        <a href="contact.html" class="block px-6 py-2 text-gray-600 hover:bg-gray-100">Contact</a>
+        <a href="contact.html" class="block px-6 py-2 text-blue-600 font-semibold hover:bg-gray-100">Contact Us</a>
+      </div>
     </header>
 
     <main class="pt-12 pb-20">
@@ -111,7 +152,7 @@
     <!-- Footer -->
     <footer class="bg-gray-800 text-white py-12">
       <div class="container mx-auto px-6 text-center">
-        <p>&copy; 2024 fixmyPhone. All rights reserved.</p>
+        <p>&copy; 2025 fixmyPhone. All rights reserved.</p>
         <div class="mt-4">
           <a
             href="privacy.html"
@@ -244,137 +285,56 @@
     </div>
 
     <script type="module">
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
       import {
-        getFirestore,
-        collection,
-        addDoc,
-        serverTimestamp,
-      } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-      // --- Firebase Configuration ---
-      console.log("[Repair] Script loaded. Initializing Firebase..."); // Debug Log
-      const firebaseConfig = {
-        // Embed config directly
-        apiKey: "AIzaSyAPwUjYPD5CzGIfT_6KqkpdLKnUNURSIs8",
-        authDomain: "fixmyphone-website-889b5.firebaseapp.com",
-        projectId: "fixmyphone-website-889b5",
-        storageBucket: "fixmyphone-website-889b5.appspot.com",
-        messagingSenderId: "619306240303",
-        appId: "1:619306240303:web:f1e2445eec7bba1a09b9da",
-      };
-      const appId = "fixmyphone-website-889b5"; // Use projectId consistently
-      let db = null;
-      let isLocalTestMode = false; // Keep this in case needed for local tests outside Canvas
-
-      try {
-        console.log(
-          "[Repair] Attempting Firebase initialization with embedded config..."
-        ); // Debug Log
-        const app = initializeApp(firebaseConfig);
-        db = getFirestore(app);
-        console.log(
-          "[Repair] Firebase initialized successfully. db object:",
-          db ? "Exists" : "Failed"
-        ); // Debug Log
-      } catch (e) {
-        console.error("[Repair] Firebase initialization failed:", e);
-        db = null; // Ensure db is null on failure
-        isLocalTestMode = true; // Fallback to local test mode if init fails
-        console.warn(
-          "[Repair] Firebase init failed, activating local test mode."
-        );
-      }
+        db,
+        validatePhone,
+        validateEmail,
+        submitQuoteRequest,
+        showFormError,
+        hideFormError,
+        resetSubmitButton,
+        initMobileMenu,
+      } from "./shared.js";
 
       document.addEventListener("DOMContentLoaded", () => {
+        initMobileMenu();
+
         const brands = [
-          {
-            name: "Apple",
-            logo: "https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg",
-            url: "brands/apple.html",
-          },
-          {
-            name: "Samsung",
-            logo: "https://upload.wikimedia.org/wikipedia/commons/2/24/Samsung_Logo.svg",
-            url: "brands/samsung.html",
-          },
-          {
-            name: "Google",
-            logo: "https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg",
-            url: "brands/google.html",
-          },
-          {
-            name: "OnePlus",
-            logo: "https://www.svgrepo.com/show/522100/oneplus.svg",
-            url: "brands/oneplus.html",
-          },
-          {
-            name: "Xiaomi",
-            logo: "https://www.svgrepo.com/show/521971/xiaomi-black.svg",
-            url: "brands/xiaomi.html",
-          },
-          {
-            name: "Oppo",
-            logo: "https://www.svgrepo.com/show/354158/oppo.svg",
-            url: "brands/oppo.html",
-          },
-          {
-            name: "Vivo",
-            logo: "https://www.svgrepo.com/show/354899/vivo.svg",
-            url: "brands/vivo.html",
-          },
-          {
-            name: "Realme",
-            logo: "https://www.svgrepo.com/show/521857/realme.svg",
-            url: "brands/realme.html",
-          },
-          {
-            name: "Motorola",
-            logo: "https://www.svgrepo.com/show/354054/motorola.svg",
-            url: "brands/motorola.html",
-          },
-          {
-            name: "Nothing",
-            logo: "https://www.svgrepo.com/show/521743/nothing-logo.svg",
-            url: "brands/nothing.html",
-          },
+          { name: "Apple", logo: "https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg", url: "brands/apple.html" },
+          { name: "Samsung", logo: "https://upload.wikimedia.org/wikipedia/commons/2/24/Samsung_Logo.svg", url: "brands/samsung.html" },
+          { name: "Google", logo: "https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg", url: "brands/google.html" },
+          { name: "OnePlus", logo: "https://www.svgrepo.com/show/522100/oneplus.svg", url: "brands/oneplus.html" },
+          { name: "Xiaomi", logo: "https://www.svgrepo.com/show/521971/xiaomi-black.svg", url: "brands/xiaomi.html" },
+          { name: "Oppo", logo: "https://www.svgrepo.com/show/354158/oppo.svg", url: "brands/oppo.html" },
+          { name: "Vivo", logo: "https://www.svgrepo.com/show/354899/vivo.svg", url: "brands/vivo.html" },
+          { name: "Realme", logo: "https://www.svgrepo.com/show/521857/realme.svg", url: "brands/realme.html" },
+          { name: "Motorola", logo: "https://www.svgrepo.com/show/354054/motorola.svg", url: "brands/motorola.html" },
+          { name: "Nothing", logo: "https://www.svgrepo.com/show/521743/nothing-logo.svg", url: "brands/nothing.html" },
         ];
 
         const brandGrid = document.getElementById("brand-grid");
         brands.forEach((brand) => {
           const card = document.createElement("a");
           card.href = brand.url;
-          card.className =
-            "brand-card flex flex-col items-center p-6 bg-white rounded-xl shadow-lg border-2 border-transparent hover:border-blue-500";
-          card.innerHTML = `
-                <img src="${brand.logo}" alt="${brand.name} Logo" class="w-24 h-16 object-contain mb-2" />
-                <span class="font-semibold text-lg text-center">${brand.name}</span>
-            `;
+          card.className = "brand-card flex flex-col items-center p-6 bg-white rounded-xl shadow-lg border-2 border-transparent hover:border-blue-500";
+          card.innerHTML = `<img src="${brand.logo}" alt="${brand.name} Logo" class="w-24 h-16 object-contain mb-2" /><span class="font-semibold text-lg text-center">${brand.name}</span>`;
           brandGrid.appendChild(card);
         });
 
         const manualCard = document.createElement("div");
         manualCard.id = "manual-brand-card";
-        manualCard.className =
-          "brand-card cursor-pointer flex flex-col items-center justify-center p-6 bg-gray-100 rounded-xl shadow-sm border-2 border-dashed border-gray-400 hover:border-blue-500 hover:bg-gray-200";
+        manualCard.className = "brand-card cursor-pointer flex flex-col items-center justify-center p-6 bg-gray-100 rounded-xl shadow-sm border-2 border-dashed border-gray-400 hover:border-blue-500 hover:bg-gray-200";
         manualCard.innerHTML = `<i class="fas fa-question-circle text-4xl text-gray-500 mb-2"></i><span class="font-semibold text-lg text-center text-gray-700">Brand Not Listed?</span>`;
         brandGrid.appendChild(manualCard);
 
+        // Direct Inquiry Modal
         const inquiryModal = document.getElementById("direct-inquiry-modal");
-        const inquiryModalContent = inquiryModal.querySelector(
-          ".modal-content-transition"
-        );
-        const closeInquiryModalBtn = document.getElementById(
-          "close-inquiry-modal"
-        );
+        const inquiryModalContent = inquiryModal.querySelector(".modal-content-transition");
+        const closeInquiryModalBtn = document.getElementById("close-inquiry-modal");
         const inquiryForm = document.getElementById("direct-inquiry-form");
         const submitInquiryBtn = document.getElementById("submit-inquiry");
-        const inquirySubmitText = document.getElementById(
-          "inquiry-submit-text"
-        );
-        const inquirySubmitSpinner = document.getElementById(
-          "inquiry-submit-spinner"
-        );
+        const inquirySubmitText = document.getElementById("inquiry-submit-text");
+        const inquirySubmitSpinner = document.getElementById("inquiry-submit-spinner");
         const inquiryFormError = document.getElementById("inquiry-form-error");
 
         const showInquiryModal = () => {
@@ -382,11 +342,11 @@
           inquiryModalContent.classList.remove("scale-95");
           document.body.style.overflow = "hidden";
         };
-
         const hideInquiryModal = () => {
           inquiryModal.classList.add("invisible", "opacity-0");
           inquiryModalContent.classList.add("scale-95");
           document.body.style.overflow = "";
+          hideFormError(inquiryFormError);
         };
 
         manualCard.addEventListener("click", showInquiryModal);
@@ -397,147 +357,55 @@
 
         inquiryForm.addEventListener("submit", async (e) => {
           e.preventDefault();
-          // --- START DEBUGGING BLOCK ---
-          console.log("[Repair] Inquiry form submitted.");
-          // --- END DEBUGGING BLOCK ---
+          hideFormError(inquiryFormError);
 
           if (!inquiryForm.checkValidity()) {
-            console.log("[Repair] Form invalid (HTML5 check). Showing error."); // Debug Log
-            inquiryFormError.textContent =
-              "Please fill out all required fields.";
-            inquiryFormError.classList.remove("hidden");
+            showFormError(inquiryFormError, "Please fill out all required fields.");
             return;
           }
           const phoneValue = document.getElementById("inquiry-phone").value;
-          if (!/^\d{10}$/.test(phoneValue)) {
-            console.log("[Repair] Form invalid (Phone regex). Showing error."); // Debug Log
-            inquiryFormError.textContent =
-              "Please enter a valid 10-digit Indian phone number.";
-            inquiryFormError.classList.remove("hidden");
+          if (!validatePhone(phoneValue)) {
+            showFormError(inquiryFormError, "Please enter a valid 10-digit Indian phone number.");
             return;
           }
           const emailValue = document.getElementById("inquiry-email").value;
-          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailValue)) {
-            console.log("[Repair] Form invalid (Email regex). Showing error."); // Debug Log
-            inquiryFormError.textContent =
-              "Please enter a valid email address.";
-            inquiryFormError.classList.remove("hidden");
+          if (!validateEmail(emailValue)) {
+            showFormError(inquiryFormError, "Please enter a valid email address.");
             return;
           }
 
-          console.log(
-            "[Repair] Form appears valid. Disabling button, showing spinner."
-          ); // Debug Log
-          inquiryFormError.classList.add("hidden");
           submitInquiryBtn.disabled = true;
           inquirySubmitText.textContent = "Submitting...";
           inquirySubmitSpinner.classList.remove("hidden");
 
-          if (isLocalTestMode) {
-            // Check if Firebase init failed
-            console.log(
-              "LOCAL TEST MODE (or Firebase init failed): Simulating direct inquiry submission."
-            );
-            setTimeout(() => {
-              const fakeDocId = `test_inquiry_${new Date().getTime()}`;
-              window.location.href = `quote-confirmation.html?id=${fakeDocId}&direct=true`;
-            }, 1500);
-            return;
-          }
-
-          // Double check db object before use
-          if (!db) {
-            console.error(
-              "[Repair] CRITICAL: db object is null. Cannot submit."
-            ); // Debug Log
-            inquiryFormError.textContent =
-              "Database connection failed. Please try again later.";
-            inquiryFormError.classList.remove("hidden");
-            submitInquiryBtn.disabled = false;
-            inquirySubmitText.textContent = "Submit Inquiry";
-            inquirySubmitSpinner.classList.add("hidden");
-            return;
-          }
-
-          const formData = {
-            name: document.getElementById("inquiry-name").value,
-            phone: phoneValue, // Use validated value
-            email: emailValue, // Use validated value
-            device: `Unlisted Brand: ${
-              document.getElementById("inquiry-device").value
-            }`,
-            services: document.getElementById("inquiry-issue").value,
-            submittedAt: serverTimestamp(),
-            status: "New (Unlisted)",
-          };
-          console.log("[Repair] Form data prepared:", formData); // Debug Log
-
-          try {
-            const collectionPath = `artifacts/${appId}/public/data/quoteRequests`;
-            console.log(
-              "[Repair] Attempting to add document to collection:",
-              collectionPath
-            ); // Debug Log
-            const collectionRef = collection(
-              db,
-              "artifacts",
-              appId,
-              "public",
-              "data",
-              "quoteRequests"
-            );
-
-            // Add a timeout promise
-            const timeoutPromise = new Promise((_, reject) =>
-              setTimeout(
-                () => reject(new Error("Request timed out after 10 seconds.")),
-                10000
-              )
-            );
-
-            const addDocPromise = addDoc(collectionRef, formData);
-
-            // Race the addDoc operation against the timeout
-            const docRef = await Promise.race([addDocPromise, timeoutPromise]);
-
-            if (!docRef || !docRef.id) {
-              console.error(
-                "[Repair] Firestore addDoc returned invalid response:",
-                docRef
-              ); // Debug Log
-              throw new Error("Database returned an invalid response.");
+          await submitQuoteRequest(
+            {
+              name: document.getElementById("inquiry-name").value,
+              phone: phoneValue,
+              email: emailValue,
+              device: `Unlisted Brand: ${document.getElementById("inquiry-device").value}`,
+              services: document.getElementById("inquiry-issue").value,
+            },
+            {
+              redirectUrl: "quote-confirmation.html",
+              errorElement: inquiryFormError,
+              submitButton: submitInquiryBtn,
+              submitTextEl: inquirySubmitText,
+              submitSpinner: inquirySubmitSpinner,
             }
-
-            console.log(
-              "[Repair] Document added successfully. Doc ID:",
-              docRef.id
-            ); // Debug Log
-            // Redirect ONLY on success
-            window.location.href = `quote-confirmation.html?id=${docRef.id}&direct=true`;
-          } catch (error) {
-            console.error(
-              "[Repair] Error or timeout submitting inquiry:",
-              error
-            ); // Debug Log
-            console.log("[Repair] Full error object:", error); // Log the full error object
-
-            if (error.message && error.message.includes("timed out")) {
-              inquiryFormError.textContent =
-                "Request timed out. Please check network and try again.";
-            } else {
-              inquiryFormError.textContent =
-                "Failed to submit inquiry. Please try again. " +
-                (error.message ? `(${error.message})` : ""); // Show error message
-            }
-            inquiryFormError.classList.remove("hidden");
-            // Re-enable button ONLY on failure
-            submitInquiryBtn.disabled = false;
-            inquirySubmitText.textContent = "Submit Inquiry";
-            inquirySubmitSpinner.classList.add("hidden");
-          }
+          );
         });
-        console.log("[Repair] DOMContentLoaded setup complete."); // Debug Log
       });
     </script>
+    <!-- WhatsApp Floating Button -->
+    <a
+      href="https://wa.me/918310061934?text=Hi%2C%20I%20need%20help%20with%20a%20phone%20repair"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="fixed bottom-6 right-6 z-50 bg-green-500 hover:bg-green-600 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-110"
+      aria-label="Chat with us on WhatsApp"
+    >
+      <i class="fab fa-whatsapp text-3xl"></i>
+    </a>
   </body>
 </html>

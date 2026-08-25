@@ -3,6 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="canonical" href="https://gofixmyphone.com/blog.html" />
     <title>Blog - Phone Care & Repair Tips | fixmyPhone</title>
     <meta
       name="description"
@@ -48,6 +50,14 @@
         box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
           0 4px 6px -2px rgba(0, 0, 0, 0.05);
       }
+      .mobile-menu-animation {
+        transition: max-height 0.3s ease-in-out;
+        max-height: 0;
+        overflow: hidden;
+      }
+      .mobile-menu-animation.active {
+        max-height: 500px;
+      }
     </style>
   </head>
 
@@ -73,10 +83,28 @@
         </div>
         <a
           href="repair_phone.html"
-          class="bg-blue-600 text-white font-semibold py-2 px-4 rounded-full shadow-md hover:bg-blue-700 transition-colors duration-200"
+          class="hidden md:inline-block bg-blue-600 text-white font-semibold py-2 px-4 rounded-full shadow-md hover:bg-blue-700 transition-colors duration-200"
           >Get a Free Quote</a
         >
+        <!-- Mobile Menu Button -->
+        <button
+          id="mobile-menu-btn"
+          class="md:hidden text-gray-600 hover:text-blue-600"
+          aria-label="Open navigation menu"
+        >
+          <i class="fas fa-bars text-2xl"></i>
+        </button>
       </nav>
+      <!-- Mobile Menu -->
+      <div
+        id="mobile-menu"
+        class="md:hidden bg-white shadow-lg py-4 mobile-menu-animation"
+      >
+        <a href="index.html#services" class="block px-6 py-2 text-gray-600 hover:bg-gray-100">Services</a>
+        <a href="repair_phone.html" class="block px-6 py-2 text-gray-600 hover:bg-gray-100">Book a Repair</a>
+        <a href="contact.html" class="block px-6 py-2 text-gray-600 hover:bg-gray-100">Contact</a>
+        <a href="repair_phone.html" class="block px-6 py-2 text-blue-600 font-semibold hover:bg-gray-100">Get a Free Quote</a>
+      </div>
     </header>
 
     <main class="py-12 md:py-20">
@@ -177,7 +205,7 @@
     <!-- Footer -->
     <footer class="bg-gray-800 text-white py-12">
       <div class="container mx-auto px-6 text-center">
-        <p>&copy; 2024 fixmyPhone. All rights reserved.</p>
+        <p>&copy; 2025 fixmyPhone. All rights reserved.</p>
         <div class="mt-4">
           <a
             href="privacy.html"
@@ -192,5 +220,21 @@
         </div>
       </div>
     </footer>
+    <script>
+      // Mobile Menu Toggle
+      document.getElementById("mobile-menu-btn").addEventListener("click", () => {
+        document.getElementById("mobile-menu").classList.toggle("active");
+      });
+    </script>
+    <!-- WhatsApp Floating Button -->
+    <a
+      href="https://wa.me/918310061934?text=Hi%2C%20I%20need%20help%20with%20a%20phone%20repair"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="fixed bottom-6 right-6 z-50 bg-green-500 hover:bg-green-600 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-110"
+      aria-label="Chat with us on WhatsApp"
+    >
+      <i class="fab fa-whatsapp text-3xl"></i>
+    </a>
   </body>
 </html>

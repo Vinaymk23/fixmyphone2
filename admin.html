@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
     <title>Admin Dashboard - fixmyPhone</title>
     <meta name="robots" content="noindex, nofollow" />
     <script src="https://cdn.tailwindcss.com"></script>
@@ -21,6 +22,7 @@
     </style>
   </head>
   <body class="bg-gray-100">
+    <!-- Login Screen -->
     <div
       id="login-screen"
       class="min-h-screen flex items-center justify-center"
@@ -31,6 +33,18 @@
         </h2>
         <form id="login-form">
           <div class="mb-4">
+            <label for="email" class="block text-gray-700 font-semibold mb-2"
+              >Email</label
+            >
+            <input
+              type="email"
+              id="email"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="admin@gofixmyphone.com"
+              required
+            />
+          </div>
+          <div class="mb-4">
             <label for="password" class="block text-gray-700 font-semibold mb-2"
               >Password</label
             >
@@ -38,10 +52,12 @@
               type="password"
               id="password"
               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
             />
           </div>
           <button
             type="submit"
+            id="login-btn"
             class="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition-colors"
           >
             Login
@@ -54,18 +70,30 @@
       </div>
     </div>
 
+    <!-- Loading State (while checking auth) -->
+    <div
+      id="auth-loading"
+      class="min-h-screen flex items-center justify-center hidden"
+    >
+      <i class="fas fa-spinner fa-spin text-3xl text-blue-600"></i>
+    </div>
+
+    <!-- Dashboard Content -->
     <div id="dashboard-content" class="hidden">
       <header class="bg-white shadow-md">
         <div
           class="container mx-auto px-6 py-4 flex justify-between items-center"
         >
           <h1 class="text-2xl font-bold text-blue-600">fixmyPhone Admin</h1>
-          <button
-            id="logout-button"
-            class="text-sm text-gray-600 hover:text-blue-600"
-          >
-            Logout
-          </button>
+          <div class="flex items-center space-x-4">
+            <span id="user-email" class="text-sm text-gray-500 hidden md:inline"></span>
+            <button
+              id="logout-button"
+              class="text-sm text-gray-600 hover:text-blue-600"
+            >
+              Logout
+            </button>
+          </div>
         </div>
       </header>
       <main class="container mx-auto px-6 py-8">
@@ -78,7 +106,6 @@
                 <th class="p-4 font-semibold text-sm">Customer</th>
                 <th class="p-4 font-semibold text-sm">Contact</th>
                 <th class="p-4 font-semibold text-sm">Details</th>
-                <!-- Changed from "Device & Services" -->
                 <th class="p-4 font-semibold text-sm">Status</th>
               </tr>
             </thead>
@@ -100,6 +127,12 @@
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
       import {
+        getAuth,
+        signInWithEmailAndPassword,
+        onAuthStateChanged,
+        signOut,
+      } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+      import {
         getFirestore,
         collection,
         query,
@@ -109,11 +142,7 @@
         orderBy,
       } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-      // --- START DEBUGGING BLOCK ---
-      console.log("Admin Page: Script loaded. Checking for Firebase config...");
-
-      // This is the configuration for your Firebase project.
-      // It's designed to be public and is required to connect to the database.
+      // Firebase configuration
       const firebaseConfig = {
         apiKey: "AIzaSyAPwUjYPD5CzGIfT_6KqkpdLKnUNURSIs8",
         authDomain: "fixmyphone-website-889b5.firebaseapp.com",
@@ -124,86 +153,92 @@
         measurementId: "G-7HZ9D236TS",
       };
 
-      let appId = "fixmyphone-website-889b5"; // Using project ID as a stable App ID
-      let db;
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
+      const appId = "fixmyphone-website-889b5";
 
-      if (firebaseConfig && firebaseConfig.apiKey) {
-        console.log(
-          "Admin Page: Firebase config object found. Attempting to initialize Firebase..."
-        );
-        try {
-          const app = initializeApp(firebaseConfig);
-          db = getFirestore(app);
-          console.log(
-            "Admin Page: Firebase initialized successfully. Database connection should be available."
-          );
-        } catch (e) {
-          console.error(
-            "Admin Page: CRITICAL - Firebase initialization FAILED.",
-            e
-          );
-          db = null;
-        }
-      } else {
-        console.error(
-          "Admin Page: CRITICAL - firebaseConfig object is missing or invalid!"
-        );
-      }
-      // --- END DEBUGGING BLOCK ---
-
+      // DOM Elements
       const loginScreen = document.getElementById("login-screen");
+      const authLoading = document.getElementById("auth-loading");
       const dashboardContent = document.getElementById("dashboard-content");
       const loginForm = document.getElementById("login-form");
       const loginError = document.getElementById("login-error");
+      const loginBtn = document.getElementById("login-btn");
       const logoutButton = document.getElementById("logout-button");
+      const userEmailEl = document.getElementById("user-email");
       const quotesTableBody = document.getElementById("quotes-table-body");
       const loadingState = document.getElementById("loading-state");
       const emptyState = document.getElementById("empty-state");
 
-      const ADMIN_PASSWORD = "fixmyphoneadmin2025";
+      // Show loading state while Firebase checks auth
+      loginScreen.classList.add("hidden");
+      authLoading.classList.remove("hidden");
 
-      function showDashboard() {
-        loginScreen.classList.add("hidden");
-        dashboardContent.classList.remove("hidden");
-        sessionStorage.setItem("isAdminAuthenticated", "true");
-        fetchQuotes();
-      }
+      // Listen for auth state changes
+      onAuthStateChanged(auth, (user) => {
+        authLoading.classList.add("hidden");
 
-      function showLogin() {
-        dashboardContent.classList.add("hidden");
-        loginScreen.classList.remove("hidden");
-        sessionStorage.removeItem("isAdminAuthenticated");
-      }
-
-      loginForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-        const password = document.getElementById("password").value;
-        if (password === ADMIN_PASSWORD) {
-          showDashboard();
+        if (user) {
+          // User is signed in — show dashboard
+          loginScreen.classList.add("hidden");
+          dashboardContent.classList.remove("hidden");
+          userEmailEl.textContent = user.email;
+          fetchQuotes();
         } else {
-          loginError.textContent = "Incorrect password.";
-          loginError.classList.remove("hidden");
+          // User is signed out — show login
+          dashboardContent.classList.add("hidden");
+          loginScreen.classList.remove("hidden");
         }
       });
 
-      logoutButton.addEventListener("click", showLogin);
+      // Login form handler
+      loginForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        loginError.classList.add("hidden");
+        loginBtn.disabled = true;
+        loginBtn.textContent = "Signing in...";
 
-      if (sessionStorage.getItem("isAdminAuthenticated") === "true") {
-        showDashboard();
-      }
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
 
+        try {
+          await signInWithEmailAndPassword(auth, email, password);
+          // onAuthStateChanged will handle the redirect
+        } catch (error) {
+          let message = "Login failed. Please try again.";
+          if (
+            error.code === "auth/user-not-found" ||
+            error.code === "auth/wrong-password" ||
+            error.code === "auth/invalid-credential"
+          ) {
+            message = "Invalid email or password.";
+          } else if (error.code === "auth/too-many-requests") {
+            message = "Too many attempts. Please try again later.";
+          } else if (error.code === "auth/invalid-email") {
+            message = "Please enter a valid email address.";
+          }
+          loginError.textContent = message;
+          loginError.classList.remove("hidden");
+        } finally {
+          loginBtn.disabled = false;
+          loginBtn.textContent = "Login";
+        }
+      });
+
+      // Logout handler
+      logoutButton.addEventListener("click", () => {
+        signOut(auth);
+      });
+
+      // Fetch and display quotes
       function fetchQuotes() {
         if (!db) {
-          console.error(
-            "Admin Dashboard: Cannot fetch quotes because database connection failed."
-          );
           loadingState.innerHTML =
-            '<p class="text-red-500">Database connection failed. Check console for errors.</p>';
+            '<p class="text-red-500">Database connection failed.</p>';
           return;
         }
-        console.log(
-          "Admin Dashboard: Fetching quote requests from Firestore..."
-        );
+
         const quotesCollectionRef = collection(
           db,
           "artifacts",
@@ -221,13 +256,9 @@
             if (snapshot.empty) {
               emptyState.classList.remove("hidden");
               quotesTableBody.innerHTML = "";
-              console.log("Admin Dashboard: No quote requests found.");
             } else {
               emptyState.classList.add("hidden");
               quotesTableBody.innerHTML = "";
-              console.log(
-                `Admin Dashboard: Found ${snapshot.size} quote request(s).`
-              );
               snapshot.forEach((docSnap) => {
                 const quote = docSnap.data();
                 const quoteId = docSnap.id;
@@ -238,87 +269,63 @@
                   ? quote.submittedAt.toDate().toLocaleString("en-IN")
                   : "N/A";
 
-                // --- START: Logic to display different form types ---
                 let detailsHtml = "";
                 if (quote.message) {
-                  // This is a contact inquiry from contact.html
                   detailsHtml = `
                     <p class="font-semibold text-gray-700">Contact Message:</p>
                     <p class="text-gray-600 italic break-words max-w-xs">"${quote.message}"</p>
                   `;
                 } else if (quote.device && (quote.services || quote.issue)) {
-                  // This is a quote request from a brand page or modal
                   let servicesText = "";
                   if (quote.services) {
                     if (Array.isArray(quote.services)) {
-                      servicesText = quote.services.join(", "); // From brands/*.html
+                      servicesText = quote.services.join(", ");
                     } else {
-                      servicesText = quote.services; // From index.html modal
+                      servicesText = quote.services;
                     }
                   } else if (quote.issue) {
-                    servicesText = quote.issue; // From repair_phone.html modal
+                    servicesText = quote.issue;
                   }
-
                   detailsHtml = `
                     <p class="font-semibold">${quote.device || "N/A"}</p>
-                    <p class="text-gray-600 break-words max-w-xs">${
-                      servicesText || "No services listed"
-                    }</p>
+                    <p class="text-gray-600 break-words max-w-xs">${servicesText || "No services listed"}</p>
                   `;
                 } else {
-                  // Fallback for any other structure
                   detailsHtml =
                     '<p class="text-gray-500">No details provided.</p>';
                 }
-                // --- END: Logic to display different form types ---
 
                 row.innerHTML = `
-                            <td class="p-4 text-sm">${submittedAt}</td>
-                            <td class="p-4 text-sm font-semibold">${
-                              quote.name
-                            }</td>
-                            <td class="p-4 text-sm">
-                                <p>${quote.phone || ""}</p>
-                                <p class="text-gray-500">${quote.email}</p>
-                            </td>
-                            <td class="p-4 text-sm">
-                                ${detailsHtml} <!-- Replaced old content -->
-                            </td>
-                            <td class="p-4 text-sm">
-                                <select data-id="${quoteId}" class="status-dropdown rounded-lg border-gray-300">
-                                    <option value="New" ${
-                                      quote.status === "New" ? "selected" : ""
-                                    }>New</option>
-                                    <option value="Contacted" ${
-                                      quote.status === "Contacted"
-                                        ? "selected"
-                                        : ""
-                                    }>Contacted</option>
-                                    <option value="Completed" ${
-                                      quote.status === "Completed"
-                                        ? "selected"
-                                        : ""
-                                    }>Completed</option>
-                                    <option value="Cancelled" ${
-                                      quote.status === "Cancelled"
-                                        ? "selected"
-                                        : ""
-                                    }>Cancelled</option>
-                                </select>
-                            </td>
-                        `;
+                  <td class="p-4 text-sm">${submittedAt}</td>
+                  <td class="p-4 text-sm font-semibold">${quote.name || "N/A"}</td>
+                  <td class="p-4 text-sm">
+                    <p>${quote.phone || ""}</p>
+                    <p class="text-gray-500">${quote.email || ""}</p>
+                  </td>
+                  <td class="p-4 text-sm">${detailsHtml}</td>
+                  <td class="p-4 text-sm">
+                    <select data-id="${quoteId}" class="status-dropdown rounded-lg border-gray-300 text-sm">
+                      <option value="New" ${quote.status === "New" ? "selected" : ""}>New</option>
+                      <option value="Contacted" ${quote.status === "Contacted" ? "selected" : ""}>Contacted</option>
+                      <option value="In Progress" ${quote.status === "In Progress" ? "selected" : ""}>In Progress</option>
+                      <option value="Completed" ${quote.status === "Completed" ? "selected" : ""}>Completed</option>
+                      <option value="Cancelled" ${quote.status === "Cancelled" ? "selected" : ""}>Cancelled</option>
+                    </select>
+                  </td>
+                `;
                 quotesTableBody.appendChild(row);
               });
             }
           },
           (error) => {
-            console.error("Admin Dashboard: Error fetching quotes: ", error);
+            console.error("Error fetching quotes:", error);
             loadingState.innerHTML =
               '<p class="text-red-500">Error fetching data. Check console.</p>';
           }
         );
       }
 
+      // Status change handler
       quotesTableBody.addEventListener("change", (e) => {
         if (e.target.classList.contains("status-dropdown")) {
           const docId = e.target.dataset.id;

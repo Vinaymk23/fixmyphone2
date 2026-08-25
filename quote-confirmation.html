@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
     <title>Quote Request Received - fixmyPhone</title>
     <meta
       name="description"
@@ -79,6 +80,13 @@
             >
               Loading...
             </p>
+            <a
+              id="track-link"
+              href="track.html"
+              class="inline-block mt-3 text-blue-600 font-semibold text-sm hover:underline"
+            >
+              <i class="fas fa-search mr-1"></i>Track your repair status →
+            </a>
           </div>
 
           <div class="text-left border-t pt-8">
@@ -131,7 +139,7 @@
     <!-- Footer -->
     <footer class="bg-gray-800 text-white py-12">
       <div class="container mx-auto px-6 text-center">
-        <p>&copy; 2024 fixmyPhone. All rights reserved.</p>
+        <p>&copy; 2025 fixmyPhone. All rights reserved.</p>
         <div class="mt-4">
           <a
             href="privacy.html"
@@ -150,15 +158,27 @@
     <script>
       document.addEventListener("DOMContentLoaded", () => {
         const quoteIdElement = document.getElementById("quote-id");
+        const trackLink = document.getElementById("track-link");
         const urlParams = new URLSearchParams(window.location.search);
         const quoteId = urlParams.get("id");
 
         if (quoteId) {
           quoteIdElement.textContent = quoteId;
+          trackLink.href = `track.html?id=${quoteId}`;
         } else {
           quoteIdElement.textContent = "Not available";
         }
       });
     </script>
+    <!-- WhatsApp Floating Button -->
+    <a
+      href="https://wa.me/918310061934?text=Hi%2C%20I%20need%20help%20with%20a%20phone%20repair"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="fixed bottom-6 right-6 z-50 bg-green-500 hover:bg-green-600 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-110"
+      aria-label="Chat with us on WhatsApp"
+    >
+      <i class="fab fa-whatsapp text-3xl"></i>
+    </a>
   </body>
 </html>

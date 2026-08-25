@@ -3,6 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="canonical" href="https://gofixmyphone.com/contact.html" />
     <title>Contact fixmyPhone | Phone Repair Shop in Mysore</title>
     <meta
       name="description"
@@ -44,6 +46,14 @@
       body {
         font-family: "Inter", sans-serif;
       }
+      .mobile-menu-animation {
+        transition: max-height 0.3s ease-in-out;
+        max-height: 0;
+        overflow: hidden;
+      }
+      .mobile-menu-animation.active {
+        max-height: 500px;
+      }
     </style>
   </head>
 
@@ -67,10 +77,28 @@
         </div>
         <a
           href="repair_phone.html"
-          class="bg-blue-600 text-white font-semibold py-2 px-4 rounded-full shadow-md hover:bg-blue-700 transition-colors duration-200"
+          class="hidden md:inline-block bg-blue-600 text-white font-semibold py-2 px-4 rounded-full shadow-md hover:bg-blue-700 transition-colors duration-200"
           >Get a Free Quote</a
         >
+        <!-- Mobile Menu Button -->
+        <button
+          id="mobile-menu-btn"
+          class="md:hidden text-gray-600 hover:text-blue-600"
+          aria-label="Open navigation menu"
+        >
+          <i class="fas fa-bars text-2xl"></i>
+        </button>
       </nav>
+      <!-- Mobile Menu -->
+      <div
+        id="mobile-menu"
+        class="md:hidden bg-white shadow-lg py-4 mobile-menu-animation"
+      >
+        <a href="index.html#services" class="block px-6 py-2 text-gray-600 hover:bg-gray-100">Services</a>
+        <a href="repair_phone.html" class="block px-6 py-2 text-gray-600 hover:bg-gray-100">Book a Repair</a>
+        <a href="blog.html" class="block px-6 py-2 text-gray-600 hover:bg-gray-100">Blog</a>
+        <a href="repair_phone.html" class="block px-6 py-2 text-blue-600 font-semibold hover:bg-gray-100">Get a Free Quote</a>
+      </div>
     </header>
 
     <main class="py-12 md:py-20">
@@ -207,7 +235,7 @@
                   ></i>
                   <div>
                     <h4 class="font-semibold">Phone</h4>
-                    <p>+91 8310061934</p>
+                    <p><a href="tel:+918310061934" class="text-blue-600 hover:underline">+91 8310061934</a></p>
                   </div>
                 </div>
                 <div class="flex items-start">
@@ -224,22 +252,38 @@
             <div class="h-96 rounded-xl overflow-hidden shadow-lg">
               <iframe
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15570.627791834164!2d76.6401666!3d12.2958448!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3b07cf0e2d19d655%3A0xc3b8a1c8b35c05b1!2sMysuru%2C%2C%20Karnataka%2C%20India!5e0!3m2!1sen!2sse!4v1694356411559!5m2!1sen!2sse"
-                <!--
-                No
-                changes
-                to
-                map
-                yet,
-                address
-                text
-                updated
-                --
-              >
-                width="100%" height="100%" style="border: 0" allowfullscreen=""
-                loading="lazy" ></iframe
-              >
+                width="100%"
+                height="100%"
+                style="border: 0"
+                allowfullscreen=""
+                loading="lazy"
+                title="fixmyPhone location on Google Maps"
+              ></iframe>
             </div>
           </div>
+        </section>
+
+        <!-- Service Area -->
+        <section class="mt-16 text-center">
+          <h2 class="text-2xl font-bold text-gray-800 mb-4">Our Service Area</h2>
+          <p class="text-gray-600 mb-8 max-w-2xl mx-auto">
+            We offer free pick-up and delivery across all of Mysore city. Here are some of the areas we serve:
+          </p>
+          <div class="flex flex-wrap justify-center gap-3">
+            <span class="bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-medium">Bogadhi</span>
+            <span class="bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-medium">Vijayanagar</span>
+            <span class="bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-medium">VV Mohalla</span>
+            <span class="bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-medium">Saraswathipuram</span>
+            <span class="bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-medium">Kuvempunagar</span>
+            <span class="bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-medium">Hebbal</span>
+            <span class="bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-medium">JP Nagar</span>
+            <span class="bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-medium">Gokulam</span>
+            <span class="bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-medium">Lakshmipuram</span>
+            <span class="bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-medium">Jayalakshmipuram</span>
+            <span class="bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-medium">Yadavagiri</span>
+            <span class="bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-medium">Dattagalli</span>
+          </div>
+          <p class="mt-6 text-sm text-gray-500">Don't see your area? <a href="https://wa.me/918310061934" class="text-blue-600 hover:underline">Contact us on WhatsApp</a> — we likely cover it too!</p>
         </section>
       </div>
     </main>
@@ -247,7 +291,7 @@
     <!-- Footer -->
     <footer class="bg-gray-800 text-white py-12">
       <div class="container mx-auto px-6 text-center">
-        <p>&copy; 2024 fixmyPhone. All rights reserved.</p>
+        <p>&copy; 2025 fixmyPhone. All rights reserved.</p>
         <div class="mt-4">
           <a
             href="privacy.html"
@@ -264,57 +308,18 @@
     </footer>
 
     <script type="module">
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
       import {
-        getFirestore,
-        collection,
-        addDoc,
-        serverTimestamp,
-      } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-      // --- START DEBUGGING BLOCK ---
-      console.log(
-        "Contact Page: Script loaded. Checking for Firebase config..."
-      );
-
-      const firebaseConfig = {
-        apiKey: "AIzaSyAPwUjYPD5CzGIfT_6KqkpdLKnUNURSIs8",
-        authDomain: "fixmyphone-website-889b5.firebaseapp.com",
-        projectId: "fixmyphone-website-889b5",
-        storageBucket: "fixmyphone-website-889b5.appspot.com",
-        messagingSenderId: "619306240303",
-        appId: "1:619306240303:web:f1e2445eec7bba1a09b9da",
-        measurementId: "G-7HZ9D236TS",
-      };
-
-      let appId = "fixmyphone-website-889b5";
-      let db = null;
-
-      if (firebaseConfig && firebaseConfig.apiKey) {
-        console.log(
-          "Contact Page: Firebase config object found. Attempting to initialize Firebase..."
-        );
-        try {
-          const app = initializeApp(firebaseConfig);
-          db = getFirestore(app);
-          console.log(
-            "Contact Page: Firebase initialized successfully. Database connection should be available."
-          );
-        } catch (e) {
-          console.error(
-            "Contact Page: CRITICAL - Firebase initialization FAILED.",
-            e
-          );
-          db = null;
-        }
-      } else {
-        console.error(
-          "Contact Page: CRITICAL - firebaseConfig object is missing or invalid!"
-        );
-      }
-      // --- END DEBUGGING BLOCK ---
+        db,
+        validateEmail,
+        submitContactForm,
+        showFormError,
+        hideFormError,
+        initMobileMenu,
+      } from "./shared.js";
 
       document.addEventListener("DOMContentLoaded", () => {
+        initMobileMenu();
+
         const contactForm = document.getElementById("contact-form");
         const submitButton = document.getElementById("submit-contact");
         const submitText = document.getElementById("submit-text");
@@ -324,74 +329,51 @@
 
         contactForm.addEventListener("submit", async (e) => {
           e.preventDefault();
+          hideFormError(formError);
+
           if (!contactForm.checkValidity()) {
-            formError.textContent = "Please fill out all required fields.";
-            formError.classList.remove("hidden");
-            return;
-          }
-          const emailValue = document.getElementById("email").value;
-          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailValue)) {
-            formError.textContent = "Please enter a valid email address.";
-            formError.classList.remove("hidden");
+            showFormError(formError, "Please fill out all required fields.");
             return;
           }
 
-          formError.classList.add("hidden");
+          const emailValue = document.getElementById("email").value;
+          if (!validateEmail(emailValue)) {
+            showFormError(formError, "Please enter a valid email address.");
+            return;
+          }
+
           submitButton.disabled = true;
           submitText.textContent = "Sending...";
           submitSpinner.classList.remove("hidden");
 
-          if (!db) {
-            console.error(
-              "Contact Form: Cannot submit, database connection is not available."
-            );
-            formError.textContent =
-              "Database is not configured correctly. Cannot submit.";
-            formError.classList.remove("hidden");
-            submitButton.disabled = false;
-            submitText.textContent = "Send Message";
-            submitSpinner.classList.add("hidden");
-            return;
-          }
-
-          const formData = {
-            name: document.getElementById("name").value,
-            email: emailValue,
-            phone: document.getElementById("phone").value,
-            message: document.getElementById("message").value,
-            submittedAt: serverTimestamp(),
-            status: "New", // Changed from "New Inquiry" for consistency
-          };
-
-          try {
-            console.log(
-              "Contact Form: Attempting to save data to Firestore..."
-            );
-            const collectionRef = collection(
-              db,
-              "artifacts",
-              appId,
-              "public",
-              "data",
-              "quoteRequests" // Changed from "contactInquiries"
-            );
-            await addDoc(collectionRef, formData);
-
-            console.log("Contact Form: Data saved successfully.");
-            formSuccess.classList.remove("hidden");
-            contactForm.reset();
-          } catch (error) {
-            console.error("Contact Form: Error adding document: ", error);
-            formError.textContent =
-              "Could not send message. Please try again later.";
-            formError.classList.remove("hidden");
-          } finally {
-            submitButton.disabled = false;
-            submitText.textContent = "Send Message";
-            submitSpinner.classList.add("hidden");
-          }
+          await submitContactForm(
+            {
+              name: document.getElementById("name").value,
+              email: emailValue,
+              phone: document.getElementById("phone").value,
+              message: document.getElementById("message").value,
+            },
+            {
+              errorElement: formError,
+              successElement: formSuccess,
+              submitButton,
+              submitTextEl: submitText,
+              submitSpinner,
+              form: contactForm,
+            }
+          );
         });
       });
     </script>
+    <!-- WhatsApp Floating Button -->
+    <a
+      href="https://wa.me/918310061934?text=Hi%2C%20I%20need%20help%20with%20a%20phone%20repair"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="fixed bottom-6 right-6 z-50 bg-green-500 hover:bg-green-600 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-110"
+      aria-label="Chat with us on WhatsApp"
+    >
+      <i class="fab fa-whatsapp text-3xl"></i>
+    </a>
   </body>
 </html>

@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="canonical" href="https://gofixmyphone.com/track.html" />
+    <title>Track Your Repair | fixmyPhone</title>
+    <meta
+      name="description"
+      content="Track the status of your phone repair with fixmyPhone in Mysore. Enter your Quote ID to see real-time updates on your repair progress."
+    />
+
+    <!-- Google Analytics -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-G0DKJDMNGL"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+      gtag("config", "G-G0DKJDMNGL");
+    </script>
+
+    <!-- Tailwind CSS, Font Awesome, and Google Fonts -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      .mobile-menu-animation {
+        transition: max-height 0.3s ease-in-out;
+        max-height: 0;
+        overflow: hidden;
+      }
+      .mobile-menu-animation.active {
+        max-height: 500px;
+      }
+    </style>
+  </head>
+
+  <body class="bg-gray-50 text-gray-800">
+    <!-- Sticky Header -->
+    <header class="sticky top-0 left-0 w-full z-40 bg-white shadow-md py-4">
+      <nav class="container mx-auto px-6 flex justify-between items-center">
+        <a href="index.html" class="flex items-center space-x-2">
+          <span class="text-2xl font-bold text-blue-600">fixmyPhone</span>
+        </a>
+        <div class="hidden md:flex items-center space-x-6">
+          <a
+            href="index.html#services"
+            class="text-gray-600 hover:text-blue-600"
+            >Services</a
+          >
+          <a href="repair_phone.html" class="text-gray-600 hover:text-blue-600"
+            >Book a Repair</a
+          >
+          <a href="blog.html" class="text-gray-600 hover:text-blue-600"
+            >Blog</a
+          >
+          <a href="contact.html" class="text-gray-600 hover:text-blue-600"
+            >Contact</a
+          >
+        </div>
+        <a
+          href="repair_phone.html"
+          class="hidden md:inline-block bg-blue-600 text-white font-semibold py-2 px-4 rounded-full shadow-md hover:bg-blue-700 transition-colors duration-200"
+          >Get a Free Quote</a
+        >
+        <!-- Mobile Menu Button -->
+        <button
+          id="mobile-menu-btn"
+          class="md:hidden text-gray-600 hover:text-blue-600"
+          aria-label="Open navigation menu"
+        >
+          <i class="fas fa-bars text-2xl"></i>
+        </button>
+      </nav>
+      <!-- Mobile Menu -->
+      <div
+        id="mobile-menu"
+        class="md:hidden bg-white shadow-lg py-4 mobile-menu-animation"
+      >
+        <a href="index.html#services" class="block px-6 py-2 text-gray-600 hover:bg-gray-100">Services</a>
+        <a href="repair_phone.html" class="block px-6 py-2 text-gray-600 hover:bg-gray-100">Book a Repair</a>
+        <a href="blog.html" class="block px-6 py-2 text-gray-600 hover:bg-gray-100">Blog</a>
+        <a href="contact.html" class="block px-6 py-2 text-gray-600 hover:bg-gray-100">Contact</a>
+        <a href="repair_phone.html" class="block px-6 py-2 text-blue-600 font-semibold hover:bg-gray-100">Get a Free Quote</a>
+      </div>
+    </header>
+
+    <main class="py-12 md:py-20">
+      <div class="container mx-auto px-6">
+        <!-- Page Title -->
+        <section class="text-center mb-12">
+          <h1 class="text-4xl lg:text-5xl font-extrabold text-gray-900">
+            Track Your Repair
+          </h1>
+          <p class="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
+            Enter your Quote ID to check the current status of your phone repair.
+          </p>
+        </section>
+
+        <!-- Search Form -->
+        <section class="max-w-lg mx-auto mb-12">
+          <form id="track-form" class="flex gap-3">
+            <input
+              type="text"
+              id="quote-id-input"
+              placeholder="Enter your Quote ID"
+              class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-gray-400"
+              required
+            />
+            <button
+              type="submit"
+              id="track-btn"
+              class="bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors duration-200"
+            >
+              Track
+            </button>
+          </form>
+          <p id="track-error" class="text-red-500 text-sm mt-2 hidden"></p>
+        </section>
+
+        <!-- Result Section -->
+        <section id="result-section" class="max-w-lg mx-auto hidden">
+          <div class="bg-white p-8 rounded-xl shadow-lg border">
+            <h2 class="text-xl font-bold text-gray-800 mb-6">Repair Status</h2>
+
+            <!-- Status Badge -->
+            <div class="flex items-center justify-between mb-6">
+              <span class="text-sm text-gray-500">Current Status</span>
+              <span id="status-badge" class="px-4 py-1 rounded-full text-sm font-semibold"></span>
+            </div>
+
+            <!-- Details -->
+            <div class="space-y-4 border-t pt-6">
+              <div class="flex justify-between">
+                <span class="text-gray-500 text-sm">Customer</span>
+                <span id="result-name" class="font-semibold text-gray-800"></span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-500 text-sm">Device</span>
+                <span id="result-device" class="font-semibold text-gray-800"></span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-500 text-sm">Services</span>
+                <span id="result-services" class="font-semibold text-gray-800 text-right max-w-[60%]"></span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-500 text-sm">Submitted</span>
+                <span id="result-date" class="font-semibold text-gray-800"></span>
+              </div>
+            </div>
+
+            <!-- Status Timeline -->
+            <div class="mt-8 border-t pt-6">
+              <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Progress</h3>
+              <div id="status-timeline" class="space-y-3">
+                <!-- Timeline steps injected by JS -->
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Not Found Section -->
+        <section id="not-found-section" class="max-w-lg mx-auto hidden">
+          <div class="bg-white p-8 rounded-xl shadow-lg border text-center">
+            <div class="text-5xl text-gray-300 mb-4">
+              <i class="fas fa-search"></i>
+            </div>
+            <h2 class="text-xl font-bold text-gray-800 mb-2">Quote Not Found</h2>
+            <p class="text-gray-600">
+              We couldn't find a repair request with that ID. Please double-check your Quote ID and try again.
+            </p>
+            <a href="contact.html" class="inline-block mt-6 text-blue-600 font-semibold hover:underline">
+              Need help? Contact us →
+            </a>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12">
+      <div class="container mx-auto px-6 text-center">
+        <p>&copy; 2025 fixmyPhone. All rights reserved.</p>
+        <div class="mt-4">
+          <a href="privacy.html" class="hover:underline text-sm text-gray-400 mx-2">Privacy Policy</a>
+          <a href="terms.html" class="hover:underline text-sm text-gray-400 mx-2">Terms of Service</a>
+        </div>
+      </div>
+    </footer>
+
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+      import {
+        getFirestore,
+        doc,
+        getDoc,
+      } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+      // Firebase config (needed for direct doc lookup by ID)
+      const firebaseConfig = {
+        apiKey: "AIzaSyAPwUjYPD5CzGIfT_6KqkpdLKnUNURSIs8",
+        authDomain: "fixmyphone-website-889b5.firebaseapp.com",
+        projectId: "fixmyphone-website-889b5",
+        storageBucket: "fixmyphone-website-889b5.appspot.com",
+        messagingSenderId: "619306240303",
+        appId: "1:619306240303:web:f1e2445eec7bba1a09b9da",
+      };
+
+      const APP_ID = "fixmyphone-website-889b5";
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+
+      // Mobile Menu
+      document.getElementById("mobile-menu-btn").addEventListener("click", () => {
+        document.getElementById("mobile-menu").classList.toggle("active");
+      });
+
+      const trackForm = document.getElementById("track-form");
+      const quoteIdInput = document.getElementById("quote-id-input");
+      const trackBtn = document.getElementById("track-btn");
+      const trackError = document.getElementById("track-error");
+      const resultSection = document.getElementById("result-section");
+      const notFoundSection = document.getElementById("not-found-section");
+
+      // Check if there's a quote ID in the URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const urlQuoteId = urlParams.get("id");
+      if (urlQuoteId) {
+        quoteIdInput.value = urlQuoteId;
+        lookupQuote(urlQuoteId);
+      }
+
+      trackForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const quoteId = quoteIdInput.value.trim();
+        if (!quoteId) {
+          trackError.textContent = "Please enter a Quote ID.";
+          trackError.classList.remove("hidden");
+          return;
+        }
+        trackError.classList.add("hidden");
+        lookupQuote(quoteId);
+      });
+
+      async function lookupQuote(quoteId) {
+        trackBtn.disabled = true;
+        trackBtn.textContent = "Searching...";
+        resultSection.classList.add("hidden");
+        notFoundSection.classList.add("hidden");
+        trackError.classList.add("hidden");
+
+        try {
+          const docRef = doc(db, "artifacts", APP_ID, "public", "data", "quoteRequests", quoteId);
+          const docSnap = await getDoc(docRef);
+
+          if (docSnap.exists()) {
+            displayResult(docSnap.data());
+          } else {
+            notFoundSection.classList.remove("hidden");
+          }
+        } catch (error) {
+          console.error("Error looking up quote:", error);
+          trackError.textContent = "Something went wrong. Please try again.";
+          trackError.classList.remove("hidden");
+        } finally {
+          trackBtn.disabled = false;
+          trackBtn.textContent = "Track";
+        }
+      }
+
+      function displayResult(data) {
+        // Status badge
+        const statusBadge = document.getElementById("status-badge");
+        const status = data.status || "New";
+        const statusColors = {
+          "New": "bg-blue-100 text-blue-800",
+          "New (Unlisted)": "bg-blue-100 text-blue-800",
+          "Contacted": "bg-yellow-100 text-yellow-800",
+          "In Progress": "bg-purple-100 text-purple-800",
+          "Completed": "bg-green-100 text-green-800",
+          "Cancelled": "bg-red-100 text-red-800",
+        };
+        statusBadge.textContent = status;
+        statusBadge.className = `px-4 py-1 rounded-full text-sm font-semibold ${statusColors[status] || "bg-gray-100 text-gray-800"}`;
+
+        // Details
+        document.getElementById("result-name").textContent = data.name || "N/A";
+        document.getElementById("result-device").textContent = data.device || "N/A";
+        document.getElementById("result-services").textContent = data.services || data.message || "N/A";
+        document.getElementById("result-date").textContent = data.submittedAt
+          ? data.submittedAt.toDate().toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })
+          : "N/A";
+
+        // Timeline
+        const steps = ["New", "Contacted", "In Progress", "Completed"];
+        const currentIndex = steps.indexOf(status);
+        const timeline = document.getElementById("status-timeline");
+        timeline.innerHTML = "";
+
+        steps.forEach((step, index) => {
+          const isCompleted = index <= currentIndex && currentIndex >= 0;
+          const isCurrent = index === currentIndex;
+          const div = document.createElement("div");
+          div.className = "flex items-center space-x-3";
+          div.innerHTML = `
+            <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
+              isCompleted ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-400"
+            }">
+              ${isCompleted ? '<i class="fas fa-check text-xs"></i>' : '<span class="text-xs">' + (index + 1) + '</span>'}
+            </div>
+            <span class="${isCurrent ? "font-semibold text-gray-900" : isCompleted ? "text-gray-700" : "text-gray-400"}">${step}</span>
+          `;
+          timeline.appendChild(div);
+        });
+
+        if (status === "Cancelled") {
+          const div = document.createElement("div");
+          div.className = "flex items-center space-x-3 mt-2";
+          div.innerHTML = `
+            <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 bg-red-100 text-red-600">
+              <i class="fas fa-times text-xs"></i>
+            </div>
+            <span class="font-semibold text-red-600">Cancelled</span>
+          `;
+          timeline.appendChild(div);
+        }
+
+        resultSection.classList.remove("hidden");
+      }
+    </script>
+    <!-- WhatsApp Floating Button -->
+    <a
+      href="https://wa.me/918310061934?text=Hi%2C%20I%20need%20help%20with%20a%20phone%20repair"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="fixed bottom-6 right-6 z-50 bg-green-500 hover:bg-green-600 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-110"
+      aria-label="Chat with us on WhatsApp"
+    >
+      <i class="fab fa-whatsapp text-3xl"></i>
+    </a>
+  </body>
+</html>
