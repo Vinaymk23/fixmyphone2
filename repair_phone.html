@@ -177,7 +177,18 @@
           id="brand-grid"
           class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6"
         >
-          <!-- Brand Cards will be dynamically inserted here -->
+          <!-- Server-rendered for SEO/crawlability; JS re-renders identically on load -->
+          <a href="brands/apple.html" class="brand-card flex flex-col items-center p-6 bg-white rounded-xl shadow-lg border-2 border-transparent hover:border-blue-500"><img src="images/brands/apple.svg" alt="Apple Logo" loading="lazy" class="w-24 h-16 object-contain mb-2" onerror="this.style.display='none'" /><span class="font-semibold text-lg text-center">Apple</span></a>
+          <a href="brands/samsung.html" class="brand-card flex flex-col items-center p-6 bg-white rounded-xl shadow-lg border-2 border-transparent hover:border-blue-500"><img src="images/brands/samsung.svg" alt="Samsung Logo" loading="lazy" class="w-24 h-16 object-contain mb-2" onerror="this.style.display='none'" /><span class="font-semibold text-lg text-center">Samsung</span></a>
+          <a href="brands/google.html" class="brand-card flex flex-col items-center p-6 bg-white rounded-xl shadow-lg border-2 border-transparent hover:border-blue-500"><img src="images/brands/google.svg" alt="Google Logo" loading="lazy" class="w-24 h-16 object-contain mb-2" onerror="this.style.display='none'" /><span class="font-semibold text-lg text-center">Google</span></a>
+          <a href="brands/oneplus.html" class="brand-card flex flex-col items-center p-6 bg-white rounded-xl shadow-lg border-2 border-transparent hover:border-blue-500"><img src="images/brands/oneplus.svg" alt="OnePlus Logo" loading="lazy" class="w-24 h-16 object-contain mb-2" onerror="this.style.display='none'" /><span class="font-semibold text-lg text-center">OnePlus</span></a>
+          <a href="brands/xiaomi.html" class="brand-card flex flex-col items-center p-6 bg-white rounded-xl shadow-lg border-2 border-transparent hover:border-blue-500"><img src="images/brands/xiaomi.svg" alt="Xiaomi Logo" loading="lazy" class="w-24 h-16 object-contain mb-2" onerror="this.style.display='none'" /><span class="font-semibold text-lg text-center">Xiaomi</span></a>
+          <a href="brands/oppo.html" class="brand-card flex flex-col items-center p-6 bg-white rounded-xl shadow-lg border-2 border-transparent hover:border-blue-500"><img src="images/brands/oppo.svg" alt="Oppo Logo" loading="lazy" class="w-24 h-16 object-contain mb-2" onerror="this.style.display='none'" /><span class="font-semibold text-lg text-center">Oppo</span></a>
+          <a href="brands/vivo.html" class="brand-card flex flex-col items-center p-6 bg-white rounded-xl shadow-lg border-2 border-transparent hover:border-blue-500"><img src="images/brands/vivo.svg" alt="Vivo Logo" loading="lazy" class="w-24 h-16 object-contain mb-2" onerror="this.style.display='none'" /><span class="font-semibold text-lg text-center">Vivo</span></a>
+          <a href="brands/realme.html" class="brand-card flex flex-col items-center p-6 bg-white rounded-xl shadow-lg border-2 border-transparent hover:border-blue-500"><img src="images/brands/realme.svg" alt="Realme Logo" loading="lazy" class="w-24 h-16 object-contain mb-2" onerror="this.style.display='none'" /><span class="font-semibold text-lg text-center">Realme</span></a>
+          <a href="brands/motorola.html" class="brand-card flex flex-col items-center p-6 bg-white rounded-xl shadow-lg border-2 border-transparent hover:border-blue-500"><img src="images/brands/motorola.svg" alt="Motorola Logo" loading="lazy" class="w-24 h-16 object-contain mb-2" onerror="this.style.display='none'" /><span class="font-semibold text-lg text-center">Motorola</span></a>
+          <a href="brands/nothing.html" class="brand-card flex flex-col items-center p-6 bg-white rounded-xl shadow-lg border-2 border-transparent hover:border-blue-500"><img src="images/brands/nothing.svg" alt="Nothing Logo" loading="lazy" class="w-24 h-16 object-contain mb-2" onerror="this.style.display='none'" /><span class="font-semibold text-lg text-center">Nothing</span></a>
+          <div id="manual-brand-card" class="brand-card cursor-pointer flex flex-col items-center justify-center p-6 bg-gray-100 rounded-xl shadow-sm border-2 border-dashed border-gray-400 hover:border-blue-500 hover:bg-gray-200"><i class="fas fa-question-circle text-4xl text-gray-500 mb-2"></i><span class="font-semibold text-lg text-center text-gray-700">Brand Not Listed?</span></div>
         </div>
       </div>
     </main>
@@ -346,6 +357,7 @@
         ];
 
         const brandGrid = document.getElementById("brand-grid");
+        brandGrid.innerHTML = "";
         brands.forEach((brand) => {
           const card = document.createElement("a");
           card.href = brand.url;

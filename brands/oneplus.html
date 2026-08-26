@@ -260,7 +260,14 @@
             id="model-grid"
             class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6"
           >
-            <!-- Models and manual entry card will be injected by JavaScript -->
+            <!-- Server-rendered for SEO/crawlability; JS re-renders identically on load -->
+            <div class="model-card cursor-pointer flex flex-col items-center p-4 bg-white rounded-xl shadow-md border-2 border-transparent" data-model="OnePlus 12"><img src="https://placehold.co/100x100/E0E7FF/1E40AF?text=OnePlus+12" alt="OnePlus 12" class="w-20 h-20 object-contain mb-2 rounded-md"/><span class="font-semibold text-sm text-center">OnePlus 12</span></div>
+            <div class="model-card cursor-pointer flex flex-col items-center p-4 bg-white rounded-xl shadow-md border-2 border-transparent" data-model="OnePlus 11"><img src="https://placehold.co/100x100/E0E7FF/1E40AF?text=OnePlus+11" alt="OnePlus 11" class="w-20 h-20 object-contain mb-2 rounded-md"/><span class="font-semibold text-sm text-center">OnePlus 11</span></div>
+            <div class="model-card cursor-pointer flex flex-col items-center p-4 bg-white rounded-xl shadow-md border-2 border-transparent" data-model="OnePlus Open"><img src="https://placehold.co/100x100/E0E7FF/1E40AF?text=OnePlus+Open" alt="OnePlus Open" class="w-20 h-20 object-contain mb-2 rounded-md"/><span class="font-semibold text-sm text-center">OnePlus Open</span></div>
+            <div class="model-card cursor-pointer flex flex-col items-center p-4 bg-white rounded-xl shadow-md border-2 border-transparent" data-model="OnePlus Nord CE 4"><img src="https://placehold.co/100x100/E0E7FF/1E40AF?text=OnePlus+Nord+CE+4" alt="OnePlus Nord CE 4" class="w-20 h-20 object-contain mb-2 rounded-md"/><span class="font-semibold text-sm text-center">OnePlus Nord CE 4</span></div>
+            <div class="model-card cursor-pointer flex flex-col items-center p-4 bg-white rounded-xl shadow-md border-2 border-transparent" data-model="OnePlus 10 Pro"><img src="https://placehold.co/100x100/E0E7FF/1E40AF?text=OnePlus+10+Pro" alt="OnePlus 10 Pro" class="w-20 h-20 object-contain mb-2 rounded-md"/><span class="font-semibold text-sm text-center">OnePlus 10 Pro</span></div>
+            <div class="model-card cursor-pointer flex flex-col items-center p-4 bg-white rounded-xl shadow-md border-2 border-transparent" data-model="OnePlus 9"><img src="https://placehold.co/100x100/E0E7FF/1E40AF?text=OnePlus+9" alt="OnePlus 9" class="w-20 h-20 object-contain mb-2 rounded-md"/><span class="font-semibold text-sm text-center">OnePlus 9</span></div>
+            <div id="manual-model-card" class="model-card cursor-pointer flex flex-col items-center justify-center p-4 bg-gray-100 rounded-xl shadow-sm border-2 border-dashed border-gray-400 hover:border-blue-500 hover:bg-gray-200"><i class="fas fa-question-circle text-4xl text-gray-500 mb-2"></i><span class="font-semibold text-sm text-center text-gray-700">Model Not Listed?</span></div>
           </div>
           <!-- Manual Model Entry Form -->
           <div id="manual-model-form" class="hidden mt-6 max-w-sm mx-auto">

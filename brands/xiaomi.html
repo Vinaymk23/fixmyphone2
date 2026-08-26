@@ -260,7 +260,13 @@
             id="model-grid"
             class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6"
           >
-            <!-- Models and manual entry card will be injected by JavaScript -->
+            <!-- Server-rendered for SEO/crawlability; JS re-renders identically on load -->
+            <div class="model-card cursor-pointer flex flex-col items-center p-4 bg-white rounded-xl shadow-md border-2 border-transparent" data-model="Xiaomi 14 Ultra"><img src="https://placehold.co/100x100/E0E7FF/1E40AF?text=Xiaomi+14+Ultra" alt="Xiaomi 14 Ultra" class="w-20 h-20 object-contain mb-2 rounded-md"/><span class="font-semibold text-sm text-center">Xiaomi 14 Ultra</span></div>
+            <div class="model-card cursor-pointer flex flex-col items-center p-4 bg-white rounded-xl shadow-md border-2 border-transparent" data-model="Redmi Note 13 Pro+"><img src="https://placehold.co/100x100/E0E7FF/1E40AF?text=Redmi+Note+13+Pro+" alt="Redmi Note 13 Pro+" class="w-20 h-20 object-contain mb-2 rounded-md"/><span class="font-semibold text-sm text-center">Redmi Note 13 Pro+</span></div>
+            <div class="model-card cursor-pointer flex flex-col items-center p-4 bg-white rounded-xl shadow-md border-2 border-transparent" data-model="Xiaomi 13 Pro"><img src="https://placehold.co/100x100/E0E7FF/1E40AF?text=Xiaomi+13+Pro" alt="Xiaomi 13 Pro" class="w-20 h-20 object-contain mb-2 rounded-md"/><span class="font-semibold text-sm text-center">Xiaomi 13 Pro</span></div>
+            <div class="model-card cursor-pointer flex flex-col items-center p-4 bg-white rounded-xl shadow-md border-2 border-transparent" data-model="Poco X6 Pro"><img src="https://placehold.co/100x100/E0E7FF/1E40AF?text=Poco+X6+Pro" alt="Poco X6 Pro" class="w-20 h-20 object-contain mb-2 rounded-md"/><span class="font-semibold text-sm text-center">Poco X6 Pro</span></div>
+            <div class="model-card cursor-pointer flex flex-col items-center p-4 bg-white rounded-xl shadow-md border-2 border-transparent" data-model="Redmi 13C"><img src="https://placehold.co/100x100/E0E7FF/1E40AF?text=Redmi+13C" alt="Redmi 13C" class="w-20 h-20 object-contain mb-2 rounded-md"/><span class="font-semibold text-sm text-center">Redmi 13C</span></div>
+            <div id="manual-model-card" class="model-card cursor-pointer flex flex-col items-center justify-center p-4 bg-gray-100 rounded-xl shadow-sm border-2 border-dashed border-gray-400 hover:border-blue-500 hover:bg-gray-200"><i class="fas fa-question-circle text-4xl text-gray-500 mb-2"></i><span class="font-semibold text-sm text-center text-gray-700">Model Not Listed?</span></div>
           </div>
           <!-- Manual Model Entry Form -->
           <div id="manual-model-form" class="hidden mt-6 max-w-sm mx-auto">

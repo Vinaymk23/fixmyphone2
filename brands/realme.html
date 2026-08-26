@@ -260,7 +260,12 @@
             id="model-grid"
             class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6"
           >
-            <!-- Models and manual entry card will be injected by JavaScript -->
+            <!-- Server-rendered for SEO/crawlability; JS re-renders identically on load -->
+            <div class="model-card cursor-pointer flex flex-col items-center p-4 bg-white rounded-xl shadow-md border-2 border-transparent" data-model="Realme 12 Pro+"><img src="https://placehold.co/100x100/E0E7FF/1E40AF?text=Realme+12+Pro+" alt="Realme 12 Pro+" class="w-20 h-20 object-contain mb-2 rounded-md"/><span class="font-semibold text-sm text-center">Realme 12 Pro+</span></div>
+            <div class="model-card cursor-pointer flex flex-col items-center p-4 bg-white rounded-xl shadow-md border-2 border-transparent" data-model="Realme GT 2 Pro"><img src="https://placehold.co/100x100/E0E7FF/1E40AF?text=Realme+GT+2+Pro" alt="Realme GT 2 Pro" class="w-20 h-20 object-contain mb-2 rounded-md"/><span class="font-semibold text-sm text-center">Realme GT 2 Pro</span></div>
+            <div class="model-card cursor-pointer flex flex-col items-center p-4 bg-white rounded-xl shadow-md border-2 border-transparent" data-model="Realme Narzo 70 Pro"><img src="https://placehold.co/100x100/E0E7FF/1E40AF?text=Realme+Narzo+70+Pro" alt="Realme Narzo 70 Pro" class="w-20 h-20 object-contain mb-2 rounded-md"/><span class="font-semibold text-sm text-center">Realme Narzo 70 Pro</span></div>
+            <div class="model-card cursor-pointer flex flex-col items-center p-4 bg-white rounded-xl shadow-md border-2 border-transparent" data-model="Realme C67"><img src="https://placehold.co/100x100/E0E7FF/1E40AF?text=Realme+C67" alt="Realme C67" class="w-20 h-20 object-contain mb-2 rounded-md"/><span class="font-semibold text-sm text-center">Realme C67</span></div>
+            <div id="manual-model-card" class="model-card cursor-pointer flex flex-col items-center justify-center p-4 bg-gray-100 rounded-xl shadow-sm border-2 border-dashed border-gray-400 hover:border-blue-500 hover:bg-gray-200"><i class="fas fa-question-circle text-4xl text-gray-500 mb-2"></i><span class="font-semibold text-sm text-center text-gray-700">Model Not Listed?</span></div>
           </div>
           <!-- Manual Model Entry Form -->
           <div id="manual-model-form" class="hidden mt-6 max-w-sm mx-auto">
