@@ -70,7 +70,7 @@ Posts under `posts/` follow:
 - Copyright year: 2026
 
 ### Phone numbers and contact:
-- Always display phone as: +91 8310061934
+- Always display phone as: +91 9008419525
 - Email: support@gofixmyphone.com
 - Never fabricate alternative contact details
 

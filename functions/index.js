@@ -11,9 +11,9 @@ const RESEND_API_KEY = defineSecret("RESEND_API_KEY");
 
 const APP_ID = "fixmyphone-website-889b5";
 // TEMP: Resend's unverified onboarding@resend.dev sender can only deliver to
-// the email the Resend account was signed up with. Switch back to
+// the email the Resend account was signed up with. Switch to
 // support@gofixmyphone.com once gofixmyphone.com is verified in Resend.
-const NOTIFY_EMAIL = "vinaymk2309@gmail.com";
+const NOTIFY_EMAILS = ["vinaymk2309@gmail.com", "rishisraj97@gmail.com"];
 const FROM_EMAIL = "fixmyPhone Alerts <onboarding@resend.dev>";
 
 function escapeHtml(value) {
@@ -48,7 +48,7 @@ exports.notifyOnNewQuote = onDocumentCreated(
 
     const { data: sendResult, error } = await resend.emails.send({
       from: FROM_EMAIL,
-      to: [NOTIFY_EMAIL],
+      to: NOTIFY_EMAILS,
       reply_to: data.email || undefined,
       subject: `New Repair Request — ${device !== "N/A" ? device : "fixmyPhone"}`,
       html: `
