@@ -16,6 +16,31 @@
     <priority>0.80</priority>
   </url>
   <url>
+    <loc>https://gofixmyphone.com/pricing.html</loc>
+    <lastmod>2026-08-26</lastmod>
+    <priority>0.90</priority>
+  </url>
+  <url>
+    <loc>https://gofixmyphone.com/about.html</loc>
+    <lastmod>2026-08-26</lastmod>
+    <priority>0.70</priority>
+  </url>
+  <url>
+    <loc>https://gofixmyphone.com/screen-replacement-mysore.html</loc>
+    <lastmod>2026-08-26</lastmod>
+    <priority>0.90</priority>
+  </url>
+  <url>
+    <loc>https://gofixmyphone.com/battery-replacement-mysore.html</loc>
+    <lastmod>2026-08-26</lastmod>
+    <priority>0.90</priority>
+  </url>
+  <url>
+    <loc>https://gofixmyphone.com/water-damage-repair-mysore.html</loc>
+    <lastmod>2026-08-26</lastmod>
+    <priority>0.90</priority>
+  </url>
+  <url>
     <loc>https://gofixmyphone.com/blog.html</loc>
     <lastmod>2026-08-25</lastmod>
     <priority>0.80</priority>
@@ -74,6 +99,11 @@
     <loc>https://gofixmyphone.com/brands/nothing.html</loc>
     <lastmod>2026-08-25</lastmod>
     <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://gofixmyphone.com/posts/phone-repair-cost-guide-mysore.html</loc>
+    <lastmod>2026-08-26</lastmod>
+    <priority>0.70</priority>
   </url>
   <url>
     <loc>https://gofixmyphone.com/posts/10-tips-for-battery-life.html</loc>

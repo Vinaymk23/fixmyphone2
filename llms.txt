@@ -1,0 +1,39 @@
+# fixmyPhone
+
+> fixmyPhone is a smartphone repair business in Mysore (Mysuru), Karnataka, India, offering free doorstep pick-up and delivery for repairs. It fixes screens, batteries, charging ports, cameras, speakers/mics, back glass, water damage, and software issues on all major phone brands.
+
+## Business details
+
+- Address: # 2259, Bogadhi 2nd stage, Mysuru, Karnataka 570009, India
+- Phone / WhatsApp: +91 9008419525
+- Email: support@gofixmyphone.com
+- Hours: Monday–Saturday, 9:00 AM–7:00 PM. Closed Sunday.
+- Payment accepted: Cash, UPI (Google Pay, PhonePe, Paytm), bank transfer
+- Warranty: 30-day warranty on parts and labour for every repair, including free re-repair and free pick-up if the same issue recurs.
+- Service area: Free pick-up and delivery across Mysore city, including Bogadhi, Vijayanagar, VV Mohalla, Saraswathipuram, Kuvempunagar, Hebbal, JP Nagar, Gokulam, Lakshmipuram, Jayalakshmipuram, Yadavagiri, and Dattagalli.
+- Brands serviced: Apple, Samsung, Google, OnePlus, Xiaomi, Oppo, Vivo, Realme, Motorola, Nothing, and other brands on request.
+
+## Starting prices (in INR, subject to model and part grade)
+
+- Software Issues: from ₹399
+- Speaker & Mic Repair: from ₹499
+- Charging Port Repair: from ₹599
+- Battery Replacement: from ₹799
+- Camera Repair: from ₹899
+- Water Damage Repair: from ₹999
+- Back Glass Repair: from ₹1,199
+- Screen Replacement: from ₹1,499
+
+## How it works
+
+1. Request a free quote online, by phone, or via WhatsApp.
+2. fixmyPhone calls to confirm the issue and schedule a doorstep pick-up.
+3. The device is picked up, repaired at the workshop, and delivered back at no extra cost.
+
+## Pages
+
+- Homepage: https://gofixmyphone.com/
+- Start a repair (choose brand): https://gofixmyphone.com/repair_phone.html
+- Contact: https://gofixmyphone.com/contact.html
+- Track an existing repair: https://gofixmyphone.com/track.html
+- Blog (device care tips): https://gofixmyphone.com/blog.html

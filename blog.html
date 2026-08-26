@@ -59,8 +59,22 @@
       gtag("config", "G-G0DKJDMNGL");
     </script>
 
+    <!-- WhatsApp Click Tracking -->
+    <script>
+      document.addEventListener("click", function (e) {
+        var link = e.target.closest('a[href*="wa.me"]');
+        if (link && typeof gtag === "function") {
+          gtag("event", "whatsapp_click", {
+            event_category: "engagement",
+            event_label: link.href,
+            page_path: window.location.pathname,
+          });
+        }
+      });
+    </script>
+
     <!-- Tailwind CSS, Font Awesome, and Google Fonts -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/styles.css" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
@@ -155,6 +169,31 @@
 
         <!-- Blog Post Grid -->
         <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <!-- Blog Post Card 0 -->
+          <div
+            class="post-card bg-white rounded-xl shadow-md overflow-hidden flex flex-col"
+          >
+            <img
+              src="https://placehold.co/600x400/1E40AF/fff?text=Repair+Cost+Guide"
+              alt="Illustration of a phone repair price list"
+              class="w-full h-48 object-cover"
+            />
+            <div class="p-6 flex flex-col flex-grow">
+              <h3 class="text-xl font-semibold mb-2 text-gray-800">
+                How Much Does Phone Repair Cost in Mysore? (2026 Guide)
+              </h3>
+              <p class="text-gray-600 text-sm flex-grow">
+                A straight answer on what repairs actually cost, and what
+                makes the price go up or down for your specific phone...
+              </p>
+              <a
+                href="posts/phone-repair-cost-guide-mysore.html"
+                class="mt-4 inline-block text-blue-600 font-semibold hover:underline self-start"
+                >Read More &rarr;</a
+              >
+            </div>
+          </div>
+
           <!-- Blog Post Card 1 -->
           <div
             class="post-card bg-white rounded-xl shadow-md overflow-hidden flex flex-col"

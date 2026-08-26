@@ -9,8 +9,8 @@
 
 ## DO
 
-- Keep all pages as standalone static HTML — no build step, no bundling
-- Use Tailwind CSS utility classes via CDN for all styling
+- Keep all pages as standalone static HTML — no build step in deployment (Netlify serves the files as-is, no build command configured)
+- Use Tailwind CSS utility classes, compiled to the committed `/styles.css` (see "Tailwind Build" below) — don't reintroduce the CDN script
 - Include Google Analytics snippet on every page
 - Match the existing page structure and component patterns when adding new pages
 - Use `container mx-auto px-6` for all content wrappers
@@ -33,7 +33,6 @@
 - Don't add external JS files to the site pages — keep all site scripts inline
 - Don't change the Google Analytics ID (G-G0DKJDMNGL)
 - Don't use colors outside the established palette (blue-600 primary, gray-50/800 backgrounds)
-- Don't replace Tailwind CDN with a local install or PostCSS setup
 - Don't change the business contact details without explicit instruction
 - Don't add new CDN dependencies without asking
 - Don't use `!important` in styles
@@ -69,6 +68,14 @@
 - Quote/contact form submissions write to Firestore (`artifacts/{APP_ID}/public/data/quoteRequests`) via `shared.js`
 - Always validate required fields client-side before submission
 - Show success/error feedback inline (no `alert()` calls)
+
+## Tailwind Build
+
+- The site used to load Tailwind from `cdn.tailwindcss.com` (a runtime JS compiler downloaded on every page load). It now uses a compiled, committed `/styles.css` instead — same visual output, much smaller and faster, no runtime compilation in the visitor's browser.
+- `tailwind.config.js` and `tailwind-input.css` at the project root define the build; `styles.css` is the generated output that every page links to (`<link rel="stylesheet" href="/styles.css" />`).
+- **Whenever you add or change a Tailwind class anywhere in the HTML, you must rebuild `styles.css`, or the new class won't exist in the shipped CSS and will silently do nothing.** Run `bun run build:css` (or `npm run build:css` if npm is available) from the project root, then commit the updated `styles.css` alongside your HTML changes.
+- `tailwindcss` lives in the root `devDependencies` (installed via `bun add -D`, since this environment doesn't have npm — see the Cloud Functions section below for the same bun/Windows quirks). This does not turn the site into an npm-built project — there's still no build step in Netlify's deploy; the compiled CSS is just a committed static file like any image.
+- Dynamic classes built via ternary/lookup in inline JS (e.g. `` isSelected ? "bg-red-100 text-red-700" : "bg-blue-100 text-blue-700" ``) are fine — Tailwind's scanner finds them as long as the *complete* class string appears literally somewhere in the file. Never build a class name by concatenating a variable into the middle of it (e.g. `` `text-${color}-600` ``) — that breaks static scanning silently.
 
 ## Backend / Cloud Functions
 

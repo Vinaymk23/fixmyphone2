@@ -23,7 +23,21 @@
       gtag("config", "G-G0DKJDMNGL");
     </script>
 
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- WhatsApp Click Tracking -->
+    <script>
+      document.addEventListener("click", function (e) {
+        var link = e.target.closest('a[href*="wa.me"]');
+        if (link && typeof gtag === "function") {
+          gtag("event", "whatsapp_click", {
+            event_category: "engagement",
+            event_label: link.href,
+            page_path: window.location.pathname,
+          });
+        }
+      });
+    </script>
+
+    <link rel="stylesheet" href="/styles.css" />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"

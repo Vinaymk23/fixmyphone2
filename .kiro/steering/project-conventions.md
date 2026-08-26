@@ -25,7 +25,7 @@ This is a **static HTML website** for "fixmyPhone" — a phone repair business i
 Every page follows this order:
 
 1. `<!DOCTYPE html>` + `<html lang="en">`
-2. `<head>` with: charset, viewport, title, meta description, meta keywords, Google Analytics, Tailwind CDN, Font Awesome CDN, Google Fonts (Inter), inline `<style>` block
+2. `<head>` with: charset, viewport, title, meta description, meta keywords, Google Analytics, compiled Tailwind stylesheet (`/styles.css`), Font Awesome CDN, Google Fonts (Inter), inline `<style>` block
 3. `<body class="bg-gray-50 text-gray-800">`
 4. Sticky header with nav
 5. `<main>` content
@@ -44,15 +44,17 @@ Every page follows this order:
 - CTA button: "Contact Us" linking to `../contact.html`
 - Include breadcrumbs: Home > Repair Mobile Phone > [Brand]
 
-## CDN Dependencies (always in this order)
+## CSS / CDN Dependencies (always in this order)
 
 ```html
-<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="/styles.css" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
 ```
+
+`/styles.css` is a compiled, committed Tailwind build (not the CDN script) — see `guardrails.md` → "Tailwind Build" for how to rebuild it after adding new classes.
 
 ## Google Analytics
 

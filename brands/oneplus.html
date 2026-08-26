@@ -11,6 +11,34 @@
       content="Select your OnePlus model and the repair services you need. We fix screens, batteries, and more for all recent OnePlus models in Mysore."
     />
 
+    <!-- Breadcrumb Structured Data -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://gofixmyphone.com/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Repair Mobile Phone",
+            "item": "https://gofixmyphone.com/repair_phone.html"
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "name": "OnePlus",
+            "item": "https://gofixmyphone.com/brands/oneplus.html"
+          }
+        ]
+      }
+    </script>
+
     <!-- Open Graph / Facebook Meta Tags -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://gofixmyphone.com/brands/oneplus.html" />
@@ -56,8 +84,22 @@
       gtag("config", "G-G0DKJDMNGL");
     </script>
 
+    <!-- WhatsApp Click Tracking -->
+    <script>
+      document.addEventListener("click", function (e) {
+        var link = e.target.closest('a[href*="wa.me"]');
+        if (link && typeof gtag === "function") {
+          gtag("event", "whatsapp_click", {
+            event_category: "engagement",
+            event_label: link.href,
+            page_path: window.location.pathname,
+          });
+        }
+      });
+    </script>
+
     <!-- Tailwind CSS, Font Awesome, and Google Fonts -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/styles.css" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
