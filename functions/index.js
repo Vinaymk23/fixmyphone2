@@ -46,12 +46,7 @@ exports.notifyOnNewQuote = onDocumentCreated(
 
     const resend = new Resend(RESEND_API_KEY.value());
 
-    const { data: sendResult, error } = await resend.emails.send({
-      from: FROM_EMAIL,
-      to: NOTIFY_EMAILS,
-      reply_to: data.email || undefined,
-      subject: `New Repair Request — ${device !== "N/A" ? device : "fixmyPhone"}`,
-      html: `
+    const html = `
         <h2 style="margin:0 0 16px;">New quote / contact request</h2>
         <table cellpadding="6" style="border-collapse:collapse;">
           <tr><td><strong>Name</strong></td><td>${name}</td></tr>
@@ -66,13 +61,27 @@ exports.notifyOnNewQuote = onDocumentCreated(
           &nbsp;|&nbsp;
           <a href="https://gofixmyphone.com/admin.html">Open admin dashboard</a>
         </p>
-      `,
-    });
+      `;
+    const subject = `New Repair Request — ${device !== "N/A" ? device : "fixmyPhone"}`;
 
-    if (error) {
-      logger.error("Resend rejected the email", { error, quoteId });
-      return;
+    // Send one at a time: Resend's unverified sender rejects the WHOLE
+    // request if any recipient isn't allowed, so bundling recipients into
+    // one call means one bad address blocks everyone. Sending separately
+    // means each recipient's success/failure is independent.
+    for (const recipient of NOTIFY_EMAILS) {
+      const { data: sendResult, error } = await resend.emails.send({
+        from: FROM_EMAIL,
+        to: [recipient],
+        reply_to: data.email || undefined,
+        subject,
+        html,
+      });
+
+      if (error) {
+        logger.error("Resend rejected the email", { error, quoteId, recipient });
+        continue;
+      }
+      logger.info("Notification email sent", { quoteId, recipient, resendId: sendResult?.id });
     }
-    logger.info("Notification email sent", { quoteId, resendId: sendResult?.id });
   },
 );
