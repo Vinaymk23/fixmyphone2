@@ -67,11 +67,11 @@ Posts under `posts/` follow:
 - Opening hours: Mon–Sat, 9:00 AM – 7:00 PM
 - USP: Free pick-up and delivery within Mysore
 - Discount code: FIX10 (10% off first repair) — shown in dismissible banner on index.html
-- Copyright year: 2024
+- Copyright year: 2026
 
 ### Phone numbers and contact:
 - Always display phone as: +91 8310061934
-- Email: gofixmyphone@gmail.com
+- Email: support@gofixmyphone.com
 - Never fabricate alternative contact details
 
 ## Sitemap

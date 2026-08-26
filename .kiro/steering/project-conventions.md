@@ -7,7 +7,7 @@ This is a **static HTML website** for "fixmyPhone" — a phone repair business i
 - **Site URL**: https://gofixmyphone.com
 - **Business**: fixmyPhone, Mysore, Karnataka, India
 - **Phone**: +91 8310061934
-- **Email**: gofixmyphone@gmail.com
+- **Email**: support@gofixmyphone.com
 - **Address**: #2259, Bogadhi 2nd stage, Mysore 570009
 
 ## File Structure

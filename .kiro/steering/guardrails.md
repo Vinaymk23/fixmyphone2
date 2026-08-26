@@ -1,5 +1,12 @@
 # Guardrails
 
+## Working With the Site Owner
+
+- The site owner is not a developer — never assume familiarity with the CLI, git, npm, Firebase, or any dev tooling.
+- For anything that requires the owner to act outside the codebase (signing up for a service, clicking through a console, running a terminal command, entering billing details), give an explicit numbered checklist: what to click, what to type, what to paste back. One step at a time, plain language, no jargon left unexplained.
+- Before assuming a step is done, confirm it — don't chain multiple "you should now have X" assumptions together without checking in.
+- This applies to every session working on this project, not just once.
+
 ## DO
 
 - Keep all pages as standalone static HTML — no build step, no bundling
@@ -22,8 +29,8 @@
 
 ## DON'T
 
-- Don't introduce npm, webpack, vite, or any build tooling
-- Don't add external JS files — keep all scripts inline
+- Don't introduce npm, webpack, vite, or any build tooling **for the site itself** — the public HTML pages stay standalone, no build step. (This does not apply to `functions/`, the Firebase Cloud Functions codebase, which is a separate Node project and normally uses npm — see "Backend / Cloud Functions" below.)
+- Don't add external JS files to the site pages — keep all site scripts inline
 - Don't change the Google Analytics ID (G-G0DKJDMNGL)
 - Don't use colors outside the established palette (blue-600 primary, gray-50/800 backgrounds)
 - Don't replace Tailwind CDN with a local install or PostCSS setup
@@ -35,7 +42,6 @@
 - Don't modify `robots.txt` without explicit instruction
 - Don't add login/auth features — this is a public-facing informational site
 - Don't use Lorem Ipsum — write real, relevant content for Mysore phone repair
-- Don't create server-side logic or API endpoints — forms use mailto or third-party services
 - Don't introduce new fonts beyond Inter
 - Don't change the favicon or brand identity elements
 
@@ -59,10 +65,18 @@
 
 ## Form Handling
 
-- Forms currently use inline JS for validation
-- Quote/contact form submissions should be handled via a third-party service (e.g., Formspree, EmailJS) or `mailto:` link
+- Forms use inline JS for validation
+- Quote/contact form submissions write to Firestore (`artifacts/{APP_ID}/public/data/quoteRequests`) via `shared.js`
 - Always validate required fields client-side before submission
 - Show success/error feedback inline (no `alert()` calls)
+
+## Backend / Cloud Functions
+
+- The site uses Firebase (Firestore + Auth) as its backend — it is not a purely static site anymore, though every public page is still standalone HTML.
+- `functions/` is a Firebase Cloud Functions codebase (Node.js, deployed separately via `firebase deploy --only functions`). It has its own `package.json` and uses npm — this is normal and expected for Cloud Functions, unlike the site pages themselves.
+- New Firestore documents in `quoteRequests` trigger `notifyOnNewQuote`, which emails the business via Resend when a new lead comes in.
+- Any new Cloud Function needs: the Firebase project on the Blaze (pay-as-you-go) plan, and secrets set via `firebase functions:secrets:set` rather than hardcoded keys.
+- Requires the site owner to run CLI commands and manage a few external accounts (Firebase, Resend) — follow the "Working With the Site Owner" guidance above for all of it.
 
 ## Performance Considerations
 
