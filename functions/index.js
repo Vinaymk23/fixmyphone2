@@ -4,12 +4,16 @@
 
 const { onDocumentCreated } = require("firebase-functions/v2/firestore");
 const { defineSecret } = require("firebase-functions/params");
+const logger = require("firebase-functions/logger");
 const { Resend } = require("resend");
 
 const RESEND_API_KEY = defineSecret("RESEND_API_KEY");
 
 const APP_ID = "fixmyphone-website-889b5";
-const NOTIFY_EMAIL = "support@gofixmyphone.com";
+// TEMP: Resend's unverified onboarding@resend.dev sender can only deliver to
+// the email the Resend account was signed up with. Switch back to
+// support@gofixmyphone.com once gofixmyphone.com is verified in Resend.
+const NOTIFY_EMAIL = "vinaymk2309@gmail.com";
 const FROM_EMAIL = "fixmyPhone Alerts <onboarding@resend.dev>";
 
 function escapeHtml(value) {
@@ -42,7 +46,7 @@ exports.notifyOnNewQuote = onDocumentCreated(
 
     const resend = new Resend(RESEND_API_KEY.value());
 
-    await resend.emails.send({
+    const { data: sendResult, error } = await resend.emails.send({
       from: FROM_EMAIL,
       to: [NOTIFY_EMAIL],
       reply_to: data.email || undefined,
@@ -64,5 +68,11 @@ exports.notifyOnNewQuote = onDocumentCreated(
         </p>
       `,
     });
+
+    if (error) {
+      logger.error("Resend rejected the email", { error, quoteId });
+      return;
+    }
+    logger.info("Notification email sent", { quoteId, resendId: sendResult?.id });
   },
 );
