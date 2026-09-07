@@ -1,0 +1,77 @@
+rules_version = '2';
+
+// ---------------------------------------------------------------------------
+// Firestore security rules for fixmyPhone
+//
+// Why this file exists:
+//   Before this, the database allowed ANYONE on the internet to list every
+//   quote request — customer names, phone numbers and email addresses — by
+//   calling the public Firestore REST API. These rules close that hole while
+//   keeping the public quote form and the repair tracker working.
+//
+// The model:
+//   * Anyone may CREATE a quote request  -> the public forms must work.
+//   * Anyone may GET one request by its exact ID -> track.html needs this,
+//     and IDs are random 20-character strings, so they cannot be guessed.
+//   * Only a signed-in admin may LIST all requests -> stops the data leak.
+//   * Only a signed-in admin may UPDATE (change status) or DELETE.
+// ---------------------------------------------------------------------------
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Anyone signed in through the admin login page.
+    //
+    // This intentionally trusts Firebase Auth rather than hard-coding an
+    // email allowlist: account access is managed in the Firebase console,
+    // which keeps this file from going stale when the login changes.
+    //
+    // The one thing that must stay true for this to be safe: self-signup
+    // must remain OFF, so a stranger cannot create their own account and
+    // become an admin (Firebase console -> Authentication -> Settings ->
+    // User actions -> "Enable create (sign-up)" unchecked). To restrict
+    // access further, add an email check here, e.g.:
+    //   && request.auth.token.email in ['owner@example.com']
+    function isAdmin() {
+      return request.auth != null;
+    }
+
+    // Validates a brand-new request coming from one of the public forms.
+    // Bounded string lengths stop someone dumping junk into the database,
+    // and pinning `status` to "New" stops a stranger marking work complete.
+    function isValidNewRequest() {
+      let d = request.resource.data;
+      return d.keys().hasOnly(
+               ['name', 'phone', 'email', 'device', 'services', 'message',
+                'submittedAt', 'status'])
+             && d.keys().hasAll(['name', 'email', 'submittedAt', 'status'])
+             && d.status == 'New'
+             && d.submittedAt == request.time
+             && d.name is string && d.name.size() > 0 && d.name.size() <= 100
+             && d.email is string && d.email.size() > 0 && d.email.size() <= 200
+             && (!('phone' in d)    || (d.phone is string    && d.phone.size() <= 20))
+             && (!('device' in d)   || (d.device is string   && d.device.size() <= 200))
+             && (!('services' in d) || (d.services is string && d.services.size() <= 2000))
+             && (!('message' in d)  || (d.message is string  && d.message.size() <= 2000));
+    }
+
+    match /artifacts/{appId}/public/data/quoteRequests/{quoteId} {
+      // track.html looks up a single request by the ID shown on the
+      // confirmation page. Single-document reads stay public.
+      allow get: if true;
+
+      // Listing the whole collection is what leaked customer data. Admin only.
+      allow list: if isAdmin();
+
+      // The public quote and contact forms.
+      allow create: if isValidNewRequest();
+
+      // Status changes from the admin dashboard.
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // Everything else in the project is denied by default. Firestore denies
+    // any path with no matching allow rule, so no catch-all is needed here.
+  }
+}

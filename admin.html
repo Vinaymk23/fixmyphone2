@@ -234,6 +234,24 @@
         signOut(auth);
       });
 
+      // Every value below comes from a public, unauthenticated form, so it is
+      // untrusted. Escaping it before it goes into innerHTML stops a visitor
+      // from submitting markup (e.g. an onerror handler) that would then run
+      // inside this logged-in admin session.
+      function esc(value) {
+        return String(value ?? "").replace(
+          /[&<>"']/g,
+          (c) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#39;",
+            })[c]
+        );
+      }
+
       // Fetch and display quotes
       function fetchQuotes() {
         if (!db) {
@@ -276,7 +294,7 @@
                 if (quote.message) {
                   detailsHtml = `
                     <p class="font-semibold text-gray-700">Contact Message:</p>
-                    <p class="text-gray-600 italic break-words max-w-xs">"${quote.message}"</p>
+                    <p class="text-gray-600 italic break-words max-w-xs">"${esc(quote.message)}"</p>
                   `;
                 } else if (quote.device && (quote.services || quote.issue)) {
                   let servicesText = "";
@@ -290,8 +308,8 @@
                     servicesText = quote.issue;
                   }
                   detailsHtml = `
-                    <p class="font-semibold">${quote.device || "N/A"}</p>
-                    <p class="text-gray-600 break-words max-w-xs">${servicesText || "No services listed"}</p>
+                    <p class="font-semibold">${esc(quote.device || "N/A")}</p>
+                    <p class="text-gray-600 break-words max-w-xs">${esc(servicesText || "No services listed")}</p>
                   `;
                 } else {
                   detailsHtml =
@@ -299,15 +317,15 @@
                 }
 
                 row.innerHTML = `
-                  <td class="p-4 text-sm">${submittedAt}</td>
-                  <td class="p-4 text-sm font-semibold">${quote.name || "N/A"}</td>
+                  <td class="p-4 text-sm">${esc(submittedAt)}</td>
+                  <td class="p-4 text-sm font-semibold">${esc(quote.name || "N/A")}</td>
                   <td class="p-4 text-sm">
-                    <p>${quote.phone || ""}</p>
-                    <p class="text-gray-500">${quote.email || ""}</p>
+                    <p>${esc(quote.phone || "")}</p>
+                    <p class="text-gray-500">${esc(quote.email || "")}</p>
                   </td>
                   <td class="p-4 text-sm">${detailsHtml}</td>
                   <td class="p-4 text-sm">
-                    <select data-id="${quoteId}" class="status-dropdown rounded-lg border-gray-300 text-sm">
+                    <select data-id="${esc(quoteId)}" class="status-dropdown rounded-lg border-gray-300 text-sm">
                       <option value="New" ${quote.status === "New" ? "selected" : ""}>New</option>
                       <option value="Contacted" ${quote.status === "Contacted" ? "selected" : ""}>Contacted</option>
                       <option value="In Progress" ${quote.status === "In Progress" ? "selected" : ""}>In Progress</option>
