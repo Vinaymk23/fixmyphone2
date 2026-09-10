@@ -1,6 +1,10 @@
 node_modules/
 functions/node_modules/
 .firebase/
+
+# Per-machine Claude Code settings. The shared skills in .claude/skills/
+# are committed; this file is personal to each machine and is not.
+.claude/settings.local.json
 debug-log.txt
 firebase-debug.log
 firebase-debug.*.log
